@@ -76,7 +76,12 @@ async function load() {
             let fileName = $(this).text();
             let fileInfo = resultData.fileData.find(v => v.fileName == fileName).fileInfo;
             loadData(fileInfo);
-        })
+        });
+
+        $('[name="delete_load"]').click(function() {
+            let fileName = $(this).closest('ul').find('[name="load_link"]').text();
+            deleteloadData(fileName);
+        });
     } else {
         alert('시스템 오류 발생');
     }
@@ -160,6 +165,24 @@ function loadData(fileInfo) {
         trObj.find('[name="search_start_date"]').val(v.startDate);
         trObj.find('[name="search_end_date"]').val(v.endDate);
     });
+}
+
+async function deleteloadData(fileName) {
+    let response = await fetch('/careerCalculator/deleteloadData'
+        , {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({fileName}),
+        }
+    );
+
+    if(response.ok) {
+        load();
+    } else {
+        alert('시스템 오류 발생');
+    }
 }
 
 function setSample() {

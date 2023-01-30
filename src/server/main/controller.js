@@ -9,8 +9,18 @@ exports.careerCalculator = async function(req, res) {
 exports.saveCareerData = async function(req, res) {
     const param = req.body;
     try {
-        let result = fs.writeFileSync(`${careerDataFilePath}${param.fileName}.json`,param.fileInfo, 'utf8');
-        console.log(`file save result`, result);
+        fs.writeFileSync(`${careerDataFilePath}${param.fileName}.json`,param.fileInfo, 'utf8');
+        return res.status(200).json({ id: '200', message: 'success'});
+    } catch(e) {
+        console.log(e);
+        return res.status(400).json({ id: '400', message: 'error'});
+    }
+}
+
+exports.deleteloadData = async function(req, res) {
+    const param = req.body;
+    try {
+        fs.unlinkSync(`${careerDataFilePath}${param.fileName}`);
         return res.status(200).json({ id: '200', message: 'success'});
     } catch(e) {
         console.log(e);

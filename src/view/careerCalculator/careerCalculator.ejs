@@ -18,7 +18,7 @@
                     <button name="addRowBtn" type="career" style="background: #297063;">경력사항 추가</button>
                 </div>
                 <div>
-                    <!-- <button id="setSampleBtn" style="background: #34459f;">Sample Set</button> -->
+                    <button id="setSampleBtn" style="background: #34459f;">Sample Set</button>
                     <button id="saveBtn" style="background: #34459f;">저장</button>
                     <button id="loadBtn" style="background: #34459f;">불러오기</button>
                     <button id="setResultBtn" style="background: #34459f;">경력계산</button>
@@ -91,6 +91,9 @@
             <ul>
                 <li>
                     <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
+                </li>
+                <li style="max-width: 30px;">
+                    <button name="delete_load" style="cursor:pointer;">-</button>
                 </li>
             </ul>
         {{/fileData}}
