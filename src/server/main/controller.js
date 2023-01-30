@@ -42,3 +42,7 @@ exports.loadCareerData = async function(req, res) {
         return res.status(400).json({ id: '400', message: 'error'});
     }
 }
+
+exports.javascriptStudy = async function(req, res) {
+    res.render(`study/javascript/${req.params.page}`);
+}
