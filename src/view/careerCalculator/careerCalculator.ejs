@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>경력기간 산출</title>
+    <%- include('../common-script.ejs') %>
+    <link type="text/css" rel="stylesheet" href="/style/careerCalculator.css">
+    <script type="text/javascript" src="/script/careerCalculatorScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; background: #dbdbdb8c;">
+            <div style="font-size: 13pt; font-weight: bold; margin-bottom: 10px;">경력기간 계산기</div>
+                
+            <div class="button-area" style="display: flex; justify-content: space-between;">
+                <div>
+                    <button name="addRowBtn" type="education" style="background: #297063;">학력사항 추가</button>
+                    <button name="addRowBtn" type="career" style="background: #297063;">경력사항 추가</button>
+                </div>
+                <div>
+                    <!-- <button id="setSampleBtn" style="background: #34459f;">Sample Set</button> -->
+                    <button id="saveBtn" style="background: #34459f;">저장</button>
+                    <button id="loadBtn" style="background: #34459f;">불러오기</button>
+                    <button id="setResultBtn" style="background: #34459f;">경력계산</button>
+                </div>
+            </div>
+            <div>
+                <h2>학력사항</h2>
+                <table class="education-table">
+                    <colgroup>
+                        <col style="width:5%;"/>
+                        <col style="width:40%;"/>
+                        <col style="width:25%;"/>
+                        <col style="width:25%;"/>
+                        <col style="width:5%;"/>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>no</th>
+                            <th>학력명</th>
+                            <th><span style="color: red;">*</span>시작날짜</th>
+                            <th><span style="color: red;">*</span>종료날짜</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h2>경력사항</h2>
+                <table class="career-table">
+                    <colgroup>
+                        <col style="width:5%;"/>
+                        <col style="width:33%;"/>
+                        <col style="width:13%;"/>
+                        <col style="width:22%;"/>
+                        <col style="width:22%;"/>
+                        <col style="width:5%;"/>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>no</th>
+                            <th>경력명</th>
+                            <th><span style="color: red;">*</span>경력유형</th>
+                            <th><span style="color: red;">*</span>시작날짜</th>
+                            <th><span style="color: red;">*</span>종료날짜</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="result-area">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<div id="save_dialog" style="display: none;">
+    <input type="text" id="file_name" value=""/>
+</div>
+
+<div id="load_dialog" style="display: none;"></div>
+
+<script id="load_dialog_template" type="x-tmpl-mustache">
+    <div>
+        {{#fileData}}
+            <ul>
+                <li>
+                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
+                </li>
+            </ul>
+        {{/fileData}}
+    </div>
+</script>
+
+<script id="tr_template" type="x-tmpl-mustache">
+    <tr>
+        <td>
+            
+        </td>
+        <td>
+            <input type="text" class="search-input" name="search_name">
+        </td>
+        {{#careerYn}}
+            <td>
+                <select class="search-select" name="career_type">
+                    <option value="teach">강의</option>
+                    <option value="office">실무</option>
+                </select>
+            </td>
+        {{/careerYn}}
+        <td>
+            <input type="text" class="search-date" name="search_start_date" placeholder="yyyy-mm-dd" maxlength="10" value="" onKeyup="dateKeyupFunc(this);"/>
+        </td>
+        <td>
+            <input type="text" class="search-date" name="search_end_date" placeholder="yyyy-mm-dd" maxlength="10" value="" onKeyup="dateKeyupFunc(this);"/>
+        </td>
+        <td>
+            <button name="delRowBtn">-</button>
+        </td>
+    </tr>
+</script>
+
+<script id="result_template" type="x-tmpl-mustache">
+    <h2>경력계산 결과&nbsp;<span style="color: red; font-size: 12px;">(월은 30일로 계산합니다, 강의경력 일자와 실무경력 일자가 동일할 경우 강의경력 일자로 계산합니다)</span></h2>
+    
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:20%;"/>
+            <col style="width:8%;"/>
+            <col style="width:12%;"/>
+            <col style="width:12%;"/>
+            <col style="width:15%;"/>
+            <col style="width:15%;"/>
+            <col style="width:15%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>경력명</th>
+                <th>경력유형</th>
+                <th>시작날짜</th>
+                <th>종료날짜</th>
+                <th>경력 적용일 수</th>
+                <th>경력 계산</th>
+                <th>경력 계산(년/월/일)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#careerDataList}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{careerTypeStr}}</td>
+                    <td>{{startDate}}</td>
+                    <td>{{endDate}}</td>
+                    <td>{{dateCnt}}</td>
+                    <td>{{calculateDateCnt}}</td>
+                    <td>{{calculateDateStr}}</td>
+                </tr>
+            {{/careerDataList}}
+        </tbody>
+    </table>
+
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:13%;"/>
+            <col style="width:13%;"/>
+            <col style="width:40%;"/>
+            <col style="width:13%;"/>
+            <col style="width:21%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>강의경력 일 수</th>
+                <th>실무경력 일 수</th>
+                <th>경력 계산</th>
+                <th>총경력 일 수</th>
+                <th>총경력(년/월/일)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{teachCareerDateCnt}}</td>
+                <td>{{officeCareerDateCnt}}</td>
+                <td>
+                    {{&calculateStr}}
+                </td>
+                <td>{{calculateDateCnt}}</td>
+                <td>{{calculateDateStr}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:50%;"/>
+            <col style="width:50%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>학력 중복일 수</th>
+                <th>경력 중복일 수</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{educationDuplCnt}}</td>
+                <td>{{careerDuplDateCnt}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:100%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>학력 중복일 리스트&nbsp;<button name="contentsShowBtn">+</button></th>
+            </tr>
+        </thead>
+        <tbody style="display:none;">
+                <tr>
+                    <td>
+                        <div class="dupl-div">
+                            {{#educationDuplArr}}
+                                <table class="dupl-table" style="width:{{width}}%">
+                                    <colgroup>
+                                        <col style="width:5%;"/>
+                                        <col style="width:95%;"/>
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>no</th>
+                                            <th>date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#list}}
+                                            <tr>
+                                                <td class="no">{{no}}</td>
+                                                <td>{{date}}</td>
+                                            </tr>
+                                        {{/list}}
+                                    </tbody>
+                                </table>
+                            {{/educationDuplArr}}
+                        </div>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:100%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>경력 중복일 리스트&nbsp;<button name="contentsShowBtn">+</button></th>
+            </tr>
+        </thead>
+        <tbody style="display:none;">
+            <tr>
+                <td>
+                    <div class="dupl-div">
+                        {{#careerDuplDateArr}}
+                            <table class="dupl-table" style="width:{{width}}%">
+                                <colgroup>
+                                    <col style="width:5%;"/>
+                                    <col style="width:95%;"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>no</th>
+                                        <th>date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#list}}
+                                        <tr>
+                                            <td class="no">{{no}}</td>
+                                            <td>{{date}}</td>
+                                        </tr>
+                                    {{/list}}
+                                </tbody>
+                            </table>
+                        {{/careerDuplDateArr}}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:100%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>강의경력 리스트&nbsp;<button name="contentsShowBtn">+</button></th>
+            </tr>
+        </thead>
+        <tbody style="display:none;">
+            <tr>
+                <td>
+                    <div class="dupl-div">
+                        {{#teachCareerDateArr}}
+                            <table class="dupl-table" style="width:{{width}}%">
+                                <colgroup>
+                                    <col style="width:5%;"/>
+                                    <col style="width:95%;"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>no</th>
+                                        <th>date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#list}}
+                                        <tr>
+                                            <td class="no">{{no}}</td>
+                                            <td>{{date}}</td>
+                                        </tr>
+                                    {{/list}}
+                                </tbody>
+                            </table>
+                        {{/teachCareerDateArr}}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="result-table" style="margin-top:10px;">
+        <colgroup>
+            <col style="width:100%;"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>실무경력 리스트&nbsp;<button name="contentsShowBtn">+</button></th>
+            </tr>
+        </thead>
+        <tbody style="display:none;">
+            <tr>
+                <td>
+                    <div class="dupl-div">
+                        {{#officeCareerDateArr}}
+                            <table class="dupl-table" style="width:{{width}}%">
+                                <colgroup>
+                                    <col style="width:5%;"/>
+                                    <col style="width:95%;"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>no</th>
+                                        <th>date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#list}}
+                                        <tr>
+                                            <td class="no">{{no}}</td>
+                                            <td>{{date}}</td>
+                                        </tr>
+                                    {{/list}}
+                                </tbody>
+                            </table>
+                        {{/officeCareerDateArr}}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</script>
