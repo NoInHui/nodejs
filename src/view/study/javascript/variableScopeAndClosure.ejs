@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>변수의 유효범위와 클로저</title>
+    <%- include('../../common-script.ejs') %>
+</head>
+<body>
+    <h1>변수의 유효범위와 클로저</h1>
+</body>
+</html>
+
+<script>
+    // 변수의 유효범위와 클로저
+    // 자바스크립트는 함수 지향 언어입니다.
+    // 이런 특징은 개발자에게 많은 자유를 줍니다.
+    // 함수를 동적으로 생성할 수 있고, 생성한 함수를 다른 함수에 인수로 넘길 수 있으며, 생성된 곳이 아닌 곳에서 함수를 호출할 수도 있기 때문입니다.
+    
+    // 여기선 let, const 로 선언한 변수만 다룸
+    // 자바스크립트에서는 3개의 키워드를 사용해 변수를 선언할 수 있습니다. 모던한 방식의 let, const 가 있고 과거의 잔재인 var 도 있습니다.
+
+    // 코드블록
+    // 코드블록 {...} 안에서 서언한 변수는 블록 안에서만 사용할 수 있습니다.
+    // 이미 선언된 변수와 동일한 이름을 가진 변수를 별도의 블록 없이 let 으로 선언하면 에러가 발생함
+    // if, for, while 등에서도 마찬가지로 {...} 안에서 선언한 변수는 오직 블록 안에서만 접근 가능합니다.
+
+    // 중첩함수 
+    // 함수 내부에서 선언한 함수는 중첩함수라고 부릅니다.
+    function say(fristName, lastName) {
+        function getFullName() {
+            return `${fristName} ${lastName}`;
+        }
+
+        console.log(`Hello, ${getFullName()}`);
+        console.log(`Bye, ${getFullName()}`);
+    }
+    say('Noh','InHui');
+
+    // 위 예시에서 외부 변수에 접근해 이름 전체를 반환해주는 중첩함수 getFullName() 은 편의상 만든 함수임, 이렇게 자바스크립트에선 중첩 함수가 흔히 사용됩니다.
+    // 중첩함수는 새로운 객체의 프로퍼티 형태나 중첩함수 그 자체로 반환될 수 있다는 점에서 흥미롭습니다.
+    // 이렇게 반환된 중첩 함수는 어디서든 호출해 사용할 수 있습니다. 물론 외부 변수에 접근할 수 있다는 사실은 변함 없습니다.
+
+    function makeCounter() {
+        let count = 0;
+
+        return function() {
+            return count++;
+        }
+    }
+
+    let counter = makeCounter();
+    console.log(counter());
+    console.log(counter());
+    console.log(counter());
+
+    // console.log(makeCounter()());
+    // console.log(makeCounter()());
+    // console.log(makeCounter()());
+
+    // 예시의 makeCounter 는 아주 단순하지만, 여기에 약간의 변형을 가하면 난수 생성기 같은 실용성 있는 함수를 만들 수 있습니다.
+    // 그런데 makeCounter 를 살펴보다 보면 counter 를 여러 개 만들었을 때, 이 함수들은 서로 독립적일까? 함수와 중첩 함수 내 count 변수엔 어떤 값이 할당될까? 같은 의문이 들기 마련입니다.
+    // 이런 의문을 해결할 수 있게 되면 자바스크립트 숙련도가 크게 올라갑니다. 좀 더 복잡한 시나리오도 다룰 수 있게되죠.
+
+    // 렉시컬 환경
+    // 단계 1. 변수
+    // 자바스크립트에선 실행 중인 함수, 코드 블록, 스크립트 전체는 렉시컬 환경이라 불리는 내부 숨김 연관 객체를 갖습니다.
+    // 렉시컬 환경 객체는 두 부분으로 구성됩니다.
+    
+</script>
