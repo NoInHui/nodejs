@@ -8,6 +8,6 @@ router.post('/careerCalculator/save', controller.saveCareerData);
 router.post('/careerCalculator/load', controller.loadCareerData);
 router.post('/careerCalculator/deleteloadData', controller.deleteloadData);
 
-router.get('/javascriptStudy/:page', controller.javascriptStudy);
+router.get('/study/:category/:page', controller.study);
 
 module.exports = router;

@@ -25,6 +25,13 @@
 <script>
     $(document).ready(function() {
         getBodyPage();
+
+        $('.sidebar-link').click(function() {
+            $('.sidebar-link').removeClass('selected');
+            $(this).addClass('selected');
+            let url = $(this).attr('page');
+            getBodyPage(url);
+        });
     });
 
     function getBodyPage(url) {

@@ -92,6 +92,10 @@ body {
     opacity: 100%;
 }
 
+.sidebar-title.sub {
+    color: #ff3030;
+}
+
 .sidebar-link:not(:disabled):hover, .sidebar-link.selected {
     color: #1e84e1;
     cursor: pointer;

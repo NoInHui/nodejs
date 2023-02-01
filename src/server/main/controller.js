@@ -48,6 +48,7 @@ exports.loadCareerData = async function(req, res) {
     }
 }
 
-exports.javascriptStudy = async function(req, res) {
-    res.render(`study/javascript/${req.params.page}`);
+exports.study = async function(req, res) {
+    const {category, page} = req.params;
+    res.render(`study/${category}/${page}`);
 }

@@ -1,7 +1,10 @@
-function init() {
+async function init() {
     setCommonEvent();
-    addRow('education');
-    addRow('career');
+    // addRow('education');
+    // addRow('career');
+
+    await setSample();
+    await calculate();
 }
 
 function setCommonEvent() {
