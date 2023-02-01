@@ -1,9 +1,5 @@
-$(document).ready(function() {
-    init();
-    setCommonEvent();
-});
-
 function init() {
+    setCommonEvent();
     addRow('education');
     addRow('career');
 }
@@ -78,7 +74,7 @@ async function load() {
             loadData(fileInfo);
         });
 
-        $('[name="delete_load"]').click(function() {
+        $('.delete_load').click(function() {
             let fileName = $(this).closest('ul').find('[name="load_link"]').text();
             deleteloadData(fileName);
         });
@@ -241,7 +237,7 @@ function addRow(type) {
         monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
     });
 
-    addedTr.find('button[name="delRowBtn"]').off().click(function() {
+    addedTr.find('button.delRowBtn').off().click(function() {
         $(this).closest('tr').remove();
         setRownum(type);
     });

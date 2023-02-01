@@ -136,7 +136,7 @@ body {
     font-weight: 500;
 }
 
-.list-section {
+.body-section {
     width: calc(100% - 247px);
     position: absolute;
     top: 0;

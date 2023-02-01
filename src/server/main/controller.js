@@ -3,7 +3,8 @@ const fs = require('fs');
 const careerDataFilePath = 'public/save/careerCalculator/';
 
 exports.main = async function(req, res) {
-    res.render('main/main');
+    const {page = 'careerCalculator/careerCalculator'} = req.body;
+    res.render('main/main',{page});
 }
 
 exports.careerCalculator = async function(req, res) {

@@ -3,7 +3,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>경력기간 산출</title>
-    <%- include('../common-script.ejs') %>
     <link type="text/css" rel="stylesheet" href="/style/careerCalculator.css">
     <script type="text/javascript" src="/script/careerCalculatorScript.js"></script>
 </head>
@@ -24,55 +23,57 @@
                     <button id="setResultBtn" style="background: #34459f;">경력계산</button>
                 </div>
             </div>
-            <div>
-                <h2>학력사항</h2>
-                <table class="education-table">
-                    <colgroup>
-                        <col style="width:5%;"/>
-                        <col style="width:40%;"/>
-                        <col style="width:25%;"/>
-                        <col style="width:25%;"/>
-                        <col style="width:5%;"/>
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>no</th>
-                            <th>학력명</th>
-                            <th><span style="color: red;">*</span>시작날짜</th>
-                            <th><span style="color: red;">*</span>종료날짜</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <h2>경력사항</h2>
-                <table class="career-table">
-                    <colgroup>
-                        <col style="width:5%;"/>
-                        <col style="width:33%;"/>
-                        <col style="width:13%;"/>
-                        <col style="width:22%;"/>
-                        <col style="width:22%;"/>
-                        <col style="width:5%;"/>
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>no</th>
-                            <th>경력명</th>
-                            <th><span style="color: red;">*</span>경력유형</th>
-                            <th><span style="color: red;">*</span>시작날짜</th>
-                            <th><span style="color: red;">*</span>종료날짜</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div class="result-area">
+            <div class="contents-section">
+                <div>
+                    <h2>학력사항</h2>
+                    <table class="education-table">
+                        <colgroup>
+                            <col style="width:5%;"/>
+                            <col style="width:40%;"/>
+                            <col style="width:25%;"/>
+                            <col style="width:25%;"/>
+                            <col style="width:5%;"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>no</th>
+                                <th>학력명</th>
+                                <th><span style="color: red;">*</span>시작날짜</th>
+                                <th><span style="color: red;">*</span>종료날짜</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h2>경력사항</h2>
+                    <table class="career-table">
+                        <colgroup>
+                            <col style="width:5%;"/>
+                            <col style="width:33%;"/>
+                            <col style="width:13%;"/>
+                            <col style="width:22%;"/>
+                            <col style="width:22%;"/>
+                            <col style="width:5%;"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>no</th>
+                                <th>경력명</th>
+                                <th><span style="color: red;">*</span>경력유형</th>
+                                <th><span style="color: red;">*</span>시작날짜</th>
+                                <th><span style="color: red;">*</span>종료날짜</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="result-area">
+                </div>
             </div>
         </div>
     </div>
@@ -93,7 +94,7 @@
                     <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
                 </li>
                 <li style="max-width: 30px;">
-                    <button name="delete_load" style="cursor:pointer;">-</button>
+                    <button class="delete_load" style="cursor:pointer;">-</button>
                 </li>
             </ul>
         {{/fileData}}
@@ -123,7 +124,7 @@
             <input type="text" class="search-date" name="search_end_date" placeholder="yyyy-mm-dd" maxlength="10" value="" onKeyup="dateKeyupFunc(this);"/>
         </td>
         <td>
-            <button name="delRowBtn">-</button>
+            <button class="delRowBtn">-</button>
         </td>
     </tr>
 </script>
@@ -131,7 +132,7 @@
 <script id="result_template" type="x-tmpl-mustache">
     <h2>경력계산 결과&nbsp;<span style="color: red; font-size: 12px;">(월은 30일로 계산합니다, 강의경력 일자와 실무경력 일자가 동일할 경우 강의경력 일자로 계산합니다)</span></h2>
     
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:20%;"/>
             <col style="width:8%;"/>
@@ -167,7 +168,7 @@
         </tbody>
     </table>
 
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:13%;"/>
             <col style="width:13%;"/>
@@ -197,7 +198,7 @@
         </tbody>
     </table>
 
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:50%;"/>
             <col style="width:50%;"/>
@@ -216,7 +217,7 @@
         </tbody>
     </table>
 
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:100%;"/>
         </colgroup>
@@ -257,7 +258,7 @@
         </tbody>
     </table>
 
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:100%;"/>
         </colgroup>
@@ -298,7 +299,7 @@
         </tbody>
     </table>
     
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:100%;"/>
         </colgroup>
@@ -339,7 +340,7 @@
         </tbody>
     </table>
 
-    <table class="result-table" style="margin-top:10px;">
+    <table class="result-table">
         <colgroup>
             <col style="width:100%;"/>
         </colgroup>

@@ -32,6 +32,7 @@ table thead tr th {
     border-left: 1px solid #8e8b7a;
     border-right: 1px solid #8e8b7a;
     color: #0043c0;
+    vertical-align: middle;
 }
 
 
@@ -46,6 +47,7 @@ table tbody tr td {
     border-bottom: 1px solid #8e8b7a;
     border-left: 1px solid #8e8b7a;
     border-right: 1px solid #8e8b7a;
+    vertical-align: middle;
 }
 
 table tbody tr th {
@@ -67,10 +69,12 @@ table tbody tr th {
     color: #fff;
     transition: .3s;
     cursor: pointer;
+    padding: 1px 5px;
 }
 
 .search-input {
     width: 95%;
+    border: 1px solid black;
 }
 
 .dupl-list {
@@ -83,6 +87,7 @@ table tbody tr th {
 .search-date {
     width: 95%;
     text-align: center;
+    border: 1px solid black;
 }
 
 .search-select {
@@ -90,11 +95,27 @@ table tbody tr th {
     text-align: center;
 }
 
+.delRowBtn
+, .delete_load
+{
+    border-radius: 3px;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: #fff;
+    transition: .3s;
+    cursor: pointer;
+    padding: 1px 5px;
+    background: #34459f;
+}
+
 .dupl-div {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: flex-start;
+    margin: 10px 0;
 }
 
 .dupl-table {
@@ -173,4 +194,16 @@ table tbody tr th {
 
 #save_dialog {
     min-height: 0px !important;
+}
+
+.contents-section > div {
+    margin-top: 10px;
+}
+
+.contents-section > div > h2 {
+    margin-bottom: 10px;
+}
+
+.result-table {
+    margin-top: 10px;
 }

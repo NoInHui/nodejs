@@ -4,8 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>나의 공간</title>
     <%- include('../common-script.ejs') %>
-    <link type="text/css" rel="stylesheet" href="/style/careerCalculator.css">
-    <script type="text/javascript" src="/script/careerCalculatorScript.js"></script>
+    <link rel="stylesheet" href="/style/main.css">
 </head>
 <body>
     <div class="body-container">
@@ -15,11 +14,23 @@
             </h1>
         </header>
         <div class="scroll-wrap">
-            <%- include('./main-sidebar.ejs') %>  
-            <section class="list-section">
-                
+            <%- include('./main-sidebar.ejs') %>
+            <section class="body-section">
             </section>
         </div>
     </div>
 </body>
 </html>
+
+<script>
+    $(document).ready(function() {
+        getBodyPage();
+    });
+
+    function getBodyPage(url) {
+        url = url ?? '/careerCalculator';
+        $('section.body-section').load(url, function() {
+            init();
+        });
+    }
+</script>
