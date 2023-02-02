@@ -59,6 +59,11 @@ table tbody tr th {
     color: #0043c0;
 }
 
+.button-area {
+    display: flex;
+    justify-content: space-between;
+}
+
 .button-area button {
     border-radius: 3px;
     border: none;

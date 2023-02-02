@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>에디터</title>
+    <script type="text/javascript" src="/lib/smarteditor2/static/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/editor.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;">신규</h2>
+                </div>
+                <div>
+                    <button id="saveBtn" style="background: #34459f;">저장</button>
+                    <button id="loadBtn" style="background: #34459f;">불러오기</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

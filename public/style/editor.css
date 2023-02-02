@@ -1,0 +1,25 @@
+.button-area {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button-area button {
+    border-radius: 3px;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 25px;
+    color: #fff;
+    transition: .3s;
+    cursor: pointer;
+    padding: 1px 5px;
+}
+
+.contents-section > div {
+    margin-top: 10px;
+}
+
+.contents-section > div > h2 {
+    margin-bottom: 10px;
+}

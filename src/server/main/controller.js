@@ -11,6 +11,10 @@ exports.careerCalculator = async function(req, res) {
     res.render('careerCalculator/careerCalculator');
 }
 
+exports.editor = async function(req, res) {
+    res.render('editor/editor');
+}
+
 exports.saveCareerData = async function(req, res) {
     const param = req.body;
     try {
@@ -51,4 +55,8 @@ exports.loadCareerData = async function(req, res) {
 exports.study = async function(req, res) {
     const {category, page} = req.params;
     res.render(`study/${category}/${page}`);
+}
+
+exports.noRedirect = async function(req, res) {
+    res.render('noRedirect');
 }
