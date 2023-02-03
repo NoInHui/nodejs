@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>나의 공간</title>
     <%- include('../common-script.ejs') %>
+    <script type="text/javascript" src="/script/common.js"></script>
     <link rel="stylesheet" href="/style/main.css">
 </head>
 <body>
@@ -27,10 +28,12 @@
         getBodyPage();
 
         $('.sidebar-link').click(function() {
-            $('.sidebar-link').removeClass('selected');
-            $(this).addClass('selected');
             let url = $(this).attr('page');
-            getBodyPage(url);
+            if(url) {
+                $('.sidebar-link').removeClass('selected');
+                $(this).addClass('selected');
+                getBodyPage(url);
+            }
         });
     });
 

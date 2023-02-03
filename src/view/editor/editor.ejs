@@ -15,8 +15,10 @@
                     <h2 class="fileName" style="font-weight: 600;">신규</h2>
                 </div>
                 <div>
-                    <button id="saveBtn" style="background: #34459f;">저장</button>
-                    <button id="loadBtn" style="background: #34459f;">불러오기</button>
+                    <button id="newBtn" class="editor-button">신규</button>
+                    <button id="saveBtn" class="editor-button">저장</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                    <button id="loadBtn" class="editor-button">불러오기</button>
                 </div>
             </div>
             <div class="contents-section">
@@ -28,3 +30,24 @@
     </div>
 </body>
 </html>
+
+<div id="save_dialog" style="display: none;">
+    <input type="text" id="file_name" value=""/>
+</div>
+
+<div id="load_dialog" style="display: none;"></div>
+
+<script id="load_dialog_template" type="x-tmpl-mustache">
+    <div>
+        {{#fileData}}
+            <ul>
+                <li>
+                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
+                </li>
+                <li style="max-width: 30px;">
+                    <button class="delete_load" style="cursor:pointer;">-</button>
+                </li>
+            </ul>
+        {{/fileData}}
+    </div>
+</script>

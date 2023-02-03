@@ -3,8 +3,76 @@ const editor = {
     editor: [],
 }
 
+let fileName = '';
+
 async function init() {
+    changeButtonCss();
+    setCommonEvent();
     setEditor(editor, '', true);
+}
+
+function setCommonEvent() {
+    $('#saveBtn').click(function() {
+        $('#file_name').val(getDefaultFileName());
+        $('#save_dialog').dialog({
+			width: 240,
+            title: '저장',
+			modal: true,
+			resizable: false,
+			draggable: false,
+			buttons: [
+				{
+					text: `저장`,
+					click: function() {
+                        if($('#file_name').val().trim() != '') {
+                            save();
+                        } else {
+                            alert('저장명을 입력해주세요.');
+                        }
+					}
+				}
+  			]
+		});
+    });
+
+    $('#loadBtn').click(function() {
+        load();
+    });
+}
+
+async function save() {
+    let param = {
+        fileName : $('#file_name').val().trim(),
+        html: editor.editor.getById[editor.id].getIR(),
+    };
+
+    let response = await fetch('/editor/save'
+        , {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(param),
+        }
+    );
+
+    if(response.ok) {
+        $('#save_dialog').dialog('close');
+        fileName = param.fileName;
+    } else {
+        alert('시스템 오류 발생');
+    }
+    
+}
+
+function changeButtonCss() {
+    $('.editor-button').hide();
+    $('#loadBtn').show();
+    if(fileName) {
+        $('#newBtn, #updateBtn').show();
+    } else {
+        $('#saveBtn').show();
+    }
 }
 
 function setEditor(editor, content = '', writeAuth) {
@@ -39,3 +107,4 @@ function setEditor(editor, content = '', writeAuth) {
         fCreator: "createSEditor2"
     });
 }
+

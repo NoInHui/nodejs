@@ -12,6 +12,7 @@ router.post('/careerCalculator/load', controller.loadCareerData);
 router.post('/careerCalculator/deleteloadData', controller.deleteloadData);
 
 router.get('/editor', controller.editor);
+router.post('/editor/save', controller.saveEditor);
 
 router.get('/study/:category/:page', controller.study);
 

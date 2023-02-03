@@ -169,29 +169,6 @@ table tbody tr th {
     color: #666;
 }
 
-.ui-dialog-titlebar {
-    border: 1px solid #4297d7;
-    background: #2191c0 url(images/ui-bg_gloss-wave_75_2191c0_500x100.png) 50% 50% repeat-x;
-    color: #eaf5f7;
-    font-weight: bold;
-}
-
-.ui-widget .ui-widget {
-    font-size: 13px;
-    font-weight: bold;
-    background: #2191c0 url(images/ui-bg_gloss-wave_75_2191c0_500x100.png) 50% 50% repeat-x;
-    color: #eaf5f7;
-}
-
-.ui-button .ui-icon {
-    background-color: white;
-}
-
-.ui-dialog .ui-dialog-buttonpane {
-    margin: 0;
-    padding: 0;
-}
-
 #file_name {
     font-size: 11pt;
     width: 200px

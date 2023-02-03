@@ -1,6 +1,7 @@
 const fs = require('fs');
 
-const careerDataFilePath = 'public/save/careerCalculator/';
+const careerFilePath = 'public/save/careerCalculator/';
+const editorFilePath = 'public/save/editor/';
 
 exports.main = async function(req, res) {
     const {page = 'careerCalculator/careerCalculator'} = req.body;
@@ -18,7 +19,18 @@ exports.editor = async function(req, res) {
 exports.saveCareerData = async function(req, res) {
     const param = req.body;
     try {
-        fs.writeFileSync(`${careerDataFilePath}${param.fileName}.json`,param.fileInfo, 'utf8');
+        fs.writeFileSync(`${careerFilePath}${param.fileName}.json`,param.fileInfo, 'utf8');
+        return res.status(200).json({ id: '200', message: 'success'});
+    } catch(e) {
+        console.log(e);
+        return res.status(400).json({ id: '400', message: 'error'});
+    }
+}
+
+exports.saveEditor = async function(req, res) {
+    const param = req.body;
+    try {
+        fs.writeFileSync(`${editorFilePath}${param.fileName}.html`,param.html, 'utf8');
         return res.status(200).json({ id: '200', message: 'success'});
     } catch(e) {
         console.log(e);
@@ -29,7 +41,7 @@ exports.saveCareerData = async function(req, res) {
 exports.deleteloadData = async function(req, res) {
     const param = req.body;
     try {
-        fs.unlinkSync(`${careerDataFilePath}${param.fileName}`);
+        fs.unlinkSync(`${careerFilePath}${param.fileName}`);
         return res.status(200).json({ id: '200', message: 'success'});
     } catch(e) {
         console.log(e);
@@ -39,10 +51,10 @@ exports.deleteloadData = async function(req, res) {
 
 exports.loadCareerData = async function(req, res) {
     try {
-        let fileList = fs.readdirSync(careerDataFilePath);
+        let fileList = fs.readdirSync(careerFilePath);
         let fileData = new Array();
         for await (fileName of fileList) {
-            let fileInfo = fs.readFileSync(`${careerDataFilePath}${fileName}`, 'utf8');
+            let fileInfo = fs.readFileSync(`${careerFilePath}${fileName}`, 'utf8');
             fileData.push({fileName,fileInfo});
         }
         return res.status(200).json({ id: '200', message: 'success', fileData});
