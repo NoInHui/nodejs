@@ -24,7 +24,7 @@ exports.saveFile = async function(req, res) {
     }
 }
 
-exports.loadFile = async function(req, res) {
+exports.loadFileList = async function(req, res) {
     try {
         const param = req.body;
         let fileList = fs.readdirSync(param.filePath);
@@ -34,6 +34,21 @@ exports.loadFile = async function(req, res) {
             fileData.push({fileName,fileInfo});
         }
         return res.status(200).json({ id: '200', message: 'success', fileData});
+    } catch(e) {
+        console.log(e);
+        return res.status(400).json({ id: '400', message: 'error'});
+    }
+}
+
+exports.loadFile = async function(req, res) {
+    try {
+        const param = req.body;
+        if(fs.existsSync(param.filePath)) {
+            let fileInfo = fs.readFileSync(`${param.filePath}`, 'utf8');
+            return res.status(200).json({ id: '200', message: 'success', fileInfo});
+        } else {
+            return res.status(400).json({ id: '400', message: 'notexist'});
+        }
     } catch(e) {
         console.log(e);
         return res.status(400).json({ id: '400', message: 'error'});
@@ -53,7 +68,7 @@ exports.deleteFile = async function(req, res) {
 
 exports.study = async function(req, res) {
     const {category, page} = req.params;
-    res.render(`study/${category}/${page}`);
+    res.render(`study/${category}/${page}`, {category, page});
 }
 
 exports.noRedirect = async function(req, res) {

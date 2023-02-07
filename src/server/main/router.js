@@ -10,7 +10,9 @@ router.get('/careerCalculator', controller.careerCalculator);
 router.get('/editor', controller.editor);
 
 router.post('/save', controller.saveFile);
-router.post('/load', controller.loadFile);
+router.post('/load', controller.loadFileList);
+router.post('/loadFile', controller.loadFile);
+
 router.post('/delete', controller.deleteFile);
 
 router.get('/study/:category/:page', controller.study);
