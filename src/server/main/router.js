@@ -7,12 +7,11 @@ router.get('/', refererCheck, controller.main);
 router.get('/noRedirect', controller.noRedirect);
 
 router.get('/careerCalculator', controller.careerCalculator);
-router.post('/careerCalculator/save', controller.saveCareerData);
-router.post('/careerCalculator/load', controller.loadCareerData);
-router.post('/careerCalculator/deleteloadData', controller.deleteloadData);
-
 router.get('/editor', controller.editor);
-router.post('/editor/save', controller.saveEditor);
+
+router.post('/save', controller.saveFile);
+router.post('/load', controller.loadFile);
+router.post('/delete', controller.deleteFile);
 
 router.get('/study/:category/:page', controller.study);
 

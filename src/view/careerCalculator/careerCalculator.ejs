@@ -83,27 +83,6 @@
 </body>
 </html>
 
-<div id="save_dialog" style="display: none;">
-    <input type="text" id="file_name" value=""/>
-</div>
-
-<div id="load_dialog" style="display: none;"></div>
-
-<script id="load_dialog_template" type="x-tmpl-mustache">
-    <div>
-        {{#fileData}}
-            <ul>
-                <li>
-                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
-                </li>
-                <li style="max-width: 30px;">
-                    <button class="delete_load" style="cursor:pointer;">-</button>
-                </li>
-            </ul>
-        {{/fileData}}
-    </div>
-</script>
-
 <script id="tr_template" type="x-tmpl-mustache">
     <tr>
         <td>

@@ -5,14 +5,14 @@
     <title>에디터</title>
     <script type="text/javascript" src="/lib/smarteditor2/static/js/service/HuskyEZCreator.js" charset="utf-8"></script>
     <link type="text/css" rel="stylesheet" href="/style/editor.css">
-    <script type="text/javascript" src="/script/editor.js"></script>
+    <script type="text/javascript" src="/script/editorScript.js"></script>
 </head>
 <body>
     <div style="width: 100%; display: flex; justify-content: center;">
         <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
             <div class="button-area">
                 <div style="display: flex; align-items: center;">
-                    <h2 class="fileName" style="font-weight: 600;">신규</h2>
+                    <h2 class="fileName" style="font-weight: 600;"></h2>
                 </div>
                 <div>
                     <button id="newBtn" class="editor-button">신규</button>
@@ -30,12 +30,6 @@
     </div>
 </body>
 </html>
-
-<div id="save_dialog" style="display: none;">
-    <input type="text" id="file_name" value=""/>
-</div>
-
-<div id="load_dialog" style="display: none;"></div>
 
 <script id="load_dialog_template" type="x-tmpl-mustache">
     <div>
