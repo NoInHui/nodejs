@@ -24,3 +24,8 @@
 .contents-section > div > h2 {
     margin-bottom: 10px;
 }
+
+#pdfBtn
+, #hwpBtn {
+    background: #297063;
+}

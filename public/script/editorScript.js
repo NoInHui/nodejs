@@ -52,6 +52,14 @@ const editorScript = {
             editorScript.fileName = '';
             editorScript.changeButtonCss();
         });
+
+        $('#pdfBtn').click(function() {
+            editorScript.pdfExport();
+        });
+
+        $('#hwpBtn').click(function() {
+            editorScript.hwpExport();
+        });
     },
 
     load : async function() {
@@ -158,7 +166,8 @@ const editorScript = {
 
     changeButtonCss : function() {
         $('.editor-button').hide();
-        $('#loadBtn').show();
+        $('#loadBtn, #pdfBtn, #hwpBtn').show();
+        
         if(editorScript.fileName) {
             $('h2.fileName').text(editorScript.fileName);
             $('#newBtn, #updateBtn').show();
@@ -198,7 +207,53 @@ const editorScript = {
             },
             fCreator: "createSEditor2"
         });
-    }
+    },
+
+    pdfExport : function() {
+        let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
+        
+        const pdfDoc = new jsPDF({
+            orientation: 'p',
+            unit: 'mm',
+            format: 'a4',
+            compress : true,
+        });
+        const pdfImgWidth = 208;
+        const pdfMargin = 1;
+        const pdfPosition = 1;
+
+        html2canvas(editorBody[0] ,{
+			allowTaint : true,	// cross-origin allow 
+			useCORS : true,		// CORS 사용한 서버로부터 이미지 로드할 것인지 여부
+			scale : 2,			// 기본 96dpi에서 해상도를 두 배로 증가
+
+		}).then(function(canvas) {
+			let pdfImgData = canvas.toDataURL('image/png');  
+			let pdfImgHeight = canvas.height * pdfImgWidth / canvas.width;
+
+			pdfDoc.addImage(pdfImgData, 'PNG', pdfMargin, pdfPosition, pdfImgWidth, pdfImgHeight, '', 'FAST');
+            // pdfDoc.addPage();
+            const fileName = `${dateFormat(new Date())}.pdf`;
+            
+            pdfDoc.save(fileName);
+		});
+    },
+
+    hwpExport : function() {
+        let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
+        let hwpHtml = `<html><head><meta charset='utf-8'></head><body>`;
+        hwpHtml += editorBody.html();
+        hwpHtml += `</body></html>`;
+
+        let source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(hwpHtml);
+		let fileDownload = document.createElement("a");
+		document.body.appendChild(fileDownload);
+		fileDownload.href = source;
+        let fileName = `${dateFormat(new Date())}.hwp`;
+		fileDownload.download = fileName;
+		fileDownload.click();
+		document.body.removeChild(fileDownload);
+    },
 }
 
 editorScript.init();
