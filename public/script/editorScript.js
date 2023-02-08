@@ -190,7 +190,7 @@ const editorScript = {
         nhn.husky.EZCreator.createInIFrame({
             oAppRef: editor.editor,
             elPlaceHolder: editor.id,
-            sSkinURI: "/lib/smarteditor2/static/SmartEditor2Skin.html",	
+            sSkinURI: "/lib/smarteditor2-2.9.1/SmartEditor2Skin.html",	
             htParams : htParams,
             fOnAppLoad : function(){
                 editor.editor.getById[editor.id].setDefaultFont("맑은고딕", 11);
