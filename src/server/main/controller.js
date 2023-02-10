@@ -13,6 +13,10 @@ exports.editor = async function(req, res) {
     res.render('editor/editor');
 }
 
+exports.uploadPage = async function(req, res) {
+    res.render('upload/upload');
+}
+
 exports.saveFile = async function(req, res) {
     const param = req.body;
     try {

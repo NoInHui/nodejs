@@ -26,7 +26,9 @@ app.use(
 app.use(flash());
 
 const mainRouter = require('./server/main/router');
+const fileRouter = require('./server/file/router');
 
 app.use('/', mainRouter);
+app.use('/file', fileRouter);
 
 module.exports = app;
