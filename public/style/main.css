@@ -93,7 +93,8 @@ body {
 }
 
 .sidebar-title.sub {
-    color: #ff3030;
+    color: #308cff;
+    font-size: 13px;
 }
 
 .sidebar-link:not(:disabled):hover, .sidebar-link.selected {
@@ -112,6 +113,10 @@ body {
     color: #fff;
     transition: .3s;
     opacity: .8;
+}
+
+.sidebar-link.study {
+    font-size: 11px;
 }
 
 .sidebar-link.selected:before {

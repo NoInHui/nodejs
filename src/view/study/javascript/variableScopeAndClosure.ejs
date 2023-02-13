@@ -3,7 +3,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>변수의 유효범위와 클로저</title>
-    <script type="text/javascript" src="/lib/smarteditor2/static/js/service/HuskyEZCreator.js" charset="utf-8"></script>
     <link type="text/css" rel="stylesheet" href="/style/editor.css">
     <script type="text/javascript" src="/script/studyScript.js"></script>
 </head>
@@ -15,6 +14,7 @@
                     <h2 class="fileName" style="font-weight: 600;">변수의 유효범위와 클로저</h2>
                 </div>
                 <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
                     <button id="updateBtn" class="editor-button">수정</button>
                 </div>
             </div>
@@ -80,10 +80,23 @@
     // 예시의 makeCounter 는 아주 단순하지만, 여기에 약간의 변형을 가하면 난수 생성기 같은 실용성 있는 함수를 만들 수 있습니다.
     // 그런데 makeCounter 를 살펴보다 보면 counter 를 여러 개 만들었을 때, 이 함수들은 서로 독립적일까? 함수와 중첩 함수 내 count 변수엔 어떤 값이 할당될까? 같은 의문이 들기 마련입니다.
     // 이런 의문을 해결할 수 있게 되면 자바스크립트 숙련도가 크게 올라갑니다. 좀 더 복잡한 시나리오도 다룰 수 있게되죠.
+    
 
     // 렉시컬 환경
+    // 렉시컬 환경의 명확한 이해를 돕기 위해 설명을 몆 개의 단계로 나눠서 진행하겠습니다.
+
     // 단계 1. 변수
-    // 자바스크립트에선 실행 중인 함수, 코드 블록, 스크립트 전체는 렉시컬 환경이라 불리는 내부 숨김 연관 객체를 갖습니다.
+    
+    // 자바스크립트에선 실행 중인 함수, 코드 블록, 스크립트 전체는 렉시컬 환경이라 불리는 내부 숨김 연관 객체(internal hidden associated object)를 갖습니다.
     // 렉시컬 환경 객체는 두 부분으로 구성됩니다.
+    // 1. 환경 레코드 - 모든 지역 변수를 프로퍼티로 저장하고 있는 객체입니다. this 값과 같은 기타 정보도 여기에 저장됩니다.
+    // 2. 외부 렉시컬 환경에 대한 참조 - 외부 코드와 연관됨
+
+    // 변수는 특수 내부 객체인 환경 레코드의 프로퍼티일 뿐입니다. 변수를 가져오거나 변경하는것은 환경 레코드의 프로퍼티를 가져오거나 변경함을 의미합니다 
+
+    // 아래 두 줄짜리 코드엔 렉시컬 환경이 하나만 존재합니다.
+
+
+
     
 </script>

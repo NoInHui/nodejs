@@ -11,12 +11,12 @@ const editorScript = {
     init : async function() {
         this.changeButtonCss();
         this.setCommonEvent();
-        this.setEditor(editorScript.editor, '', true);
+        setEditor(editorScript.editor, '', true);
     },
 
     setCommonEvent : function() {
         $('#saveBtn').click(function() {
-            $('#file_name').val(getDefaultFileName());
+            $('#file_name').val(getDefaultFileName(new Date()));
             $('#save_dialog').dialog({
                 width: 240,
                 title: '저장',
@@ -54,11 +54,13 @@ const editorScript = {
         });
 
         $('#pdfBtn').click(function() {
-            editorScript.pdfExport();
+            let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea')[0];
+            pdfExport(editorBody);
         });
 
         $('#hwpBtn').click(function() {
-            editorScript.hwpExport();
+            let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
+            hwpExport(editorBody);
         });
     },
 
@@ -177,82 +179,8 @@ const editorScript = {
         }
     },
 
-    setEditor : function(editor, content = '', writeAuth) {
-        let sLang = "ko_KR";
-        let htParams = {
-            bUseVerticalResizer : false,		// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
-            I18N_LOCALE : sLang,
-            fOnBeforeUnload : function(){},		// submit alert 제거
-            bUseToolbar: true,                  // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
-            bUseModeChanger: true,              // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
-        };
-    
-        nhn.husky.EZCreator.createInIFrame({
-            oAppRef: editor.editor,
-            elPlaceHolder: editor.id,
-            sSkinURI: "/lib/smarteditor2-2.9.1/SmartEditor2Skin.html",	
-            htParams : htParams,
-            fOnAppLoad : function(){
-                editor.editor.getById[editor.id].setDefaultFont("맑은고딕", 11);
-                editor.editor.getById[editor.id].exec("PASTE_HTML", [content]);
-    
-                if(!writeAuth) {
-                    editor.editor.getById[editor.id].exec("DISABLE_WYSIWYG");
-                    editor.editor.getById[editor.id].exec("DISABLE_ALL_UI");
-                }
-    
-                let editorBody = $(`#${editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
-                editorBody.html(editorBody.children('div').html());
-                // $(`#${editor.id}`).next('iframe').contents().find('.se2_conversion_mode').find('.se2_converter').find('button.se2_to_text').closest('li').remove();
-            },
-            fCreator: "createSEditor2"
-        });
-    },
-
-    pdfExport : function() {
-        let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
+    hwpExport : function(object) {
         
-        const pdfDoc = new jsPDF({
-            orientation: 'p',
-            unit: 'mm',
-            format: 'a4',
-            compress : true,
-        });
-        const pdfImgWidth = 208;
-        const pdfMargin = 1;
-        const pdfPosition = 1;
-
-        html2canvas(editorBody[0] ,{
-			allowTaint : true,	// cross-origin allow 
-			useCORS : true,		// CORS 사용한 서버로부터 이미지 로드할 것인지 여부
-			scale : 2,			// 기본 96dpi에서 해상도를 두 배로 증가
-
-		}).then(function(canvas) {
-			let pdfImgData = canvas.toDataURL('image/png');  
-			let pdfImgHeight = canvas.height * pdfImgWidth / canvas.width;
-
-			pdfDoc.addImage(pdfImgData, 'PNG', pdfMargin, pdfPosition, pdfImgWidth, pdfImgHeight, '', 'FAST');
-            // pdfDoc.addPage();
-            const fileName = `${dateFormat(new Date())}.pdf`;
-            
-            pdfDoc.save(fileName);
-		});
-    },
-
-    hwpExport : function() {
-        let editorBody = $(`#${editorScript.editor.id}`).next('iframe').contents().find('iframe').contents().find('body.se2_inputarea');
-        let hwpHtml = `<html><head><meta charset='utf-8'></head><body>`;
-        hwpHtml += editorBody.html();
-        hwpHtml += `</body></html>`;
-
-        let source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(hwpHtml);
-		let fileDownload = document.createElement("a");
-		document.body.appendChild(fileDownload);
-		fileDownload.href = source;
-        let fileName = `${dateFormat(new Date())}.hwp`;
-		fileDownload.download = fileName;
-		fileDownload.click();
-		document.body.removeChild(fileDownload);
     },
 }
 

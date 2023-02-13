@@ -47,7 +47,7 @@ const careerCalculatorScript = {
         });
     
         $('#saveBtn').click(function() {
-            $('#file_name').val(getDefaultFileName());
+            $('#file_name').val(getDefaultFileName(new Date()));
             $('#save_dialog').dialog({
                 width: 240,
                 title: '저장',
