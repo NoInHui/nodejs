@@ -6,15 +6,27 @@ exports.main = async function(req, res) {
 }
 
 exports.careerCalculator = async function(req, res) {
-    res.render('careerCalculator/careerCalculator');
+    const {pageName} = req.query;
+    res.render('careerCalculator/careerCalculator', {pageName});
 }
 
 exports.editor = async function(req, res) {
-    res.render('editor/editor');
+    const {pageName} = req.query;
+    res.render('editor/editor', {pageName});
 }
 
 exports.uploadPage = async function(req, res) {
     res.render('upload/upload');
+}
+
+exports.study = async function(req, res) {
+    const {category, page} = req.params;
+    const {pageName} = req.query;
+    res.render(`study/${category}/${page}`, {category, page, pageName});
+}
+
+exports.noRedirect = async function(req, res) {
+    res.render('noRedirect');
 }
 
 exports.saveFile = async function(req, res) {
@@ -69,13 +81,3 @@ exports.deleteFile = async function(req, res) {
         return res.status(400).json({ id: '400', message: 'error'});
     }
 }
-
-exports.study = async function(req, res) {
-    const {category, page} = req.params;
-    res.render(`study/${category}/${page}`, {category, page});
-}
-
-exports.noRedirect = async function(req, res) {
-    res.render('noRedirect');
-}
-

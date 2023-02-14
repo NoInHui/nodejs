@@ -52,6 +52,7 @@
         $('.sidebar-link').click(function() {
             let url = $(this).attr('page');
             if(url) {
+                url += '?pageName=' + $(this).find('a').text().replace(/ /gi, '+');
                 $('.sidebar-link').removeClass('selected');
                 $(this).addClass('selected');
                 getBodyPage(url);
