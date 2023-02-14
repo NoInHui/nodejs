@@ -52,6 +52,10 @@ function setEditor(editor, content = '', writeAuth) {
       fOnBeforeUnload : function(){},		// submit alert 제거
       bUseToolbar: true,                  // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
       bUseModeChanger: true,              // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+      aAdditionalFontList : [["Noto Sans KR","Noto Sans"], ["Malgun Gothic","Malgun Gothic"]],
+      SE2M_FontName: {
+        htMainFont: {'id': 'Noto Sans KR','name': 'Noto Sans KR', 'url': '','cssUrl': ''} // 기본 글꼴 설정
+      },
   };
 
   nhn.husky.EZCreator.createInIFrame({
@@ -60,7 +64,7 @@ function setEditor(editor, content = '', writeAuth) {
       sSkinURI: "/lib/smarteditor2-2.9.1/SmartEditor2Skin.html",	
       htParams : htParams,
       fOnAppLoad : function(){
-          editor.editor.getById[editor.id].setDefaultFont("맑은고딕", 11);
+          editor.editor.getById[editor.id].setDefaultFont("Noto Sans KR", 12);
           editor.editor.getById[editor.id].exec("PASTE_HTML", [content]);
 
           if(!writeAuth) {

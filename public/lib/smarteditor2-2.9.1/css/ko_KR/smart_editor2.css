@@ -1,4 +1,12 @@
 @charset "UTF-8";
+@font-face {
+    font-family: 'Noto Sans KR';
+    font-style: normal;
+    font-weight: 500;
+    src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff2) format('woff2'),
+         url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.woff) format('woff'),
+         url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Medium.otf) format('opentype');
+}
 /* NHN Web Standardization Team (http://html.nhndesign.com/) HHJ 090226 */
 /* COMMON */
 body,#smart_editor2,#smart_editor2 p,#smart_editor2 h1,#smart_editor2 h2,#smart_editor2 h3,#smart_editor2 h4,#smart_editor2 h5,#smart_editor2 h6,#smart_editor2 ul,#smart_editor2 ol,#smart_editor2 li,#smart_editor2 dl,#smart_editor2 dt,#smart_editor2 dd,#smart_editor2 table,#smart_editor2 th,#smart_editor2 td,#smart_editor2 form,#smart_editor2 fieldset,#smart_editor2 legend,#smart_editor2 input,#smart_editor2 textarea,#smart_editor2 button,#smart_editor2 select{margin:0;padding:0}
@@ -191,3 +199,4 @@ body,#smart_editor2,#smart_editor2 p,#smart_editor2 h1,#smart_editor2 h2,#smart_
 #smart_editor2 .se2_text_tool .se2_text_tool_more span.tool_bg{background:none}
 #smart_editor2 .se2_text_tool .hover .se2_text_tool_more{background-position:-13px -41px}
 #smart_editor2 .se2_text_tool .active .se2_text_tool_more{background-position:-26px -41px}
+
