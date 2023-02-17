@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+// new 연산자와 생성자 함수
+
+// 객체 리터럴 {...} 을 사용하면 객체를 쉽게 만들 수 있습니다.
+// 그런데 개발을 하다 보면 유사한 객체를 여러 개 만들어야 할 때가 생기곤 합니다.
+// 복수의 사용자, 메뉴 내 다양한 아이템을 객체로 표현하려고 하는 경우가 그렇죠.
+// 'new' 연산자와 생성자 함수를 사용하면 유사한 객체 여러 개를 쉽게 만들 수 있습니다.
+
+// 생성자 함수
+
+// 생성자 함수와 일반 함수에 기술적인 차이는 없습니다.
+// 다만 생성자 함수는 아래 두 관례를 따릅니다.
+
+// 1. 함수 이름의 첫 글자는 대문자로 시작합니다.
+// 2. 반드시 'new' 연산자를 붙여 실행합니다.
+
+function User1(name) {
+    this.name = name;
+    this.isAdmin = false;
+}
+
+let user1 = new User1('InHui');
+
+console.log('user1', user1);
+
+// new user1(...) 를 써서 함수를 실행하면 아래와 같은 알고리즘이 동작합니다.
+// 1. 빈 객체를 만들어 this 에 할당합니다.
+// 2. 함수 본문을 실행합니다. this 에 새로운 프로퍼티를 추가해 this 를 수정합니다.
+// 3. this 를 반환합니다.
+
+// 예시를 이용해 new User1(...) 가 실행되면 무슨 일이 일어나는지 살펴 보도록 하겠습니다.
+
+function User2(name) {
+    // this = {}; (빈 객체가 임시적으로 만들어짐)
+    this.name = name;
+    this.isAdmin = false;
+    // return this; (this가 암시적으로 반환됨)
+}
+
+console.log('User2()', User2()); // new 연산자를 붙여야 return 된다는걸 이해하자
+
+// 객체 리터럴 문법으로 일일이 객체를 만드는 방법보다 훨씬 간단하고 읽기 쉽게 객체를 만들 수 있게 되었죠.
+// 생성자의 의의는 바로 여기에 있습니다. 재사용할 수 있는 객체 생성 코드를 구현하는 것이죠.
+
+// 모든 함수는 생성자 함수가 될 수 있다는 점을 잊지 마시기 바랍니다.
+// new 를 붙여 실행한다면 어떤 함수라도 위에 언급된 알고리즘이 실행됩니다.
+// 이름의 '첫 글자가 대문자' 인 함수는 new 를 붙여 실행해야 한다는 점도 잊지마세요. 공동의 약속이니까요.
+
+
+// new function() {...}
+// 재사용할 필요가 없는 복잡한 객체를 만들어야 한다고 해봅시다.
+// 많은 양의 코드가 필요할 겁니다.
+// 이럴 땐 아래와 같이 코드를 익명 생성자 함수로 감싸주는 방식을 사용할 수 있습니다.
+
+let user2 = new function() {
+    this.name = 'inHui';
+    this.isAdmin = false;
+}
+
+console.log('user2', user2);
+
+// 위 생성자 함수는 익명 함수이기 때문에 어디에도 저장되지 않습니다.
+// 처음 만들 때부터 단 한번만 호출할 목적으로 만들었기 때문에 재사용이 불가능합니다.
+// 이렇게 익명 생성자 함수를 이용하면 재사용은 막으면서 코드를 캡슐화 할 수 있습니다.
+
+
+// 생성자와 return문
+
+// 생성자 함수엔 보통 return 문이 없습니다.
+// 반환해야 할 것들은 모두 this 에 저장되고, this는 자동으로 반환되기 때문에 반환문을 명시적으로 써 줄 필요가 없습니다.
+
+// 그런데 만약 return 문이 있다면 어떤 일이 벌어질까요?
+
+// 객체를 return 한다면 this 대신 객체가 반환됩니다.
+// 원시형을 return 환다면 return 문이 무시됩니다.
+
+// return 뒤에 객체가 오면 생성자 함수는 해당 객체를 반환해주고, 이 외의 경우는 this 가 반환되죠.
+// 아래 에시에선 첫 번째 규칙이 적용돼 return 은 this 를 무시하고 객체를 반환합니다.
+
+function User3() {
+    this.name = 'InHui';
+    return {name: 'Peter'};
+}
+
+console.log('new User3()', new User3());
+
+// 아무것도 return 하지 않는 예시를 살펴봅시다.
+// 원시형을 반환하는 경우와 마찬가지로 두 번째 규칙이 적용됩니다.
+
+function User4() {
+    this.name = 'InHui';
+    return;
+}
+
+console.log('new User4()', new User4());
+
+// return 문이 있는 생성자 함수는 거의 없습니다.
+// 여기선 튜토리얼의 완성도를 위해 특이 케이스를 소개해보았습니다.
+
+// 괄호 생략하기
+// 인수가 없는 생성자 함수는 괄호를 생략해 호출할 수 있습니다.
+let user3 = new User4;
+console.log('user3', user3);
+// 명세서엔 괄호를 생략해도 된다고 정의되어 있지만, 좋은 스타일은 아닙니다.
+
+
+// 생성자 내 메서드
+
+// 생성자 함수를 사용하면 매개변수를 이용해 객체 내부를 자유롭게 구성할 수 있습니다.
+// 엄청난 유연성이 확보되죠.
+// 지금까진 this 에 프로퍼티를 더해주는 예시만 살펴봤는데, 메서드를 더해주는 것도 가능합니다.
+
+function User5(name) {
+    this.name = name;
+    this.sayHi = function() {
+        console.log('User5.sayHi', `hi ${this.name}`);
+    }
+}
+
+let user4 = new User5('inHui');
+
+user4.sayHi();
+
+// class 문법을 사용하면 생성자 함수를 사용하는 것과 마찬가지로 복잡한 객체를 만들 수 있습니다.
+
+
+// 요약
+// 생성자 함수는 일반 함수입3니다.
+// 다만, 일반 함수와 구분하기 위해 함수 이름 첫 글자를 대문자로 씁니다.
+// 생성자 함수는 반드시 new 연산자와 함께 호출해야 합니다.
+// new 와 함께 호출하면 내부에서 this 가 암시적으로 만들어지고, 마지막엔 this 가 반환됩니다.
+
+// 생성자 함수는 유사한 객체를 여러 개 만들 때 유용합니다.
+
+// 자바스크립트는 언어 차원에서 다양한 생성자 함수를 제공합니다.
+// 날짜를 나타내는 데 쓰이즞 Date, 집합(set)을 나타내는 데 쓰이는 Set 등의 내장 객체는 이런 생성자 함수를 이용해 만들 수 있습니다.
+
+
+</script>

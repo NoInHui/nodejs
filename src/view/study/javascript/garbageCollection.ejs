@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+// 가비지 컬렉션
+
+// 자바스크립트는 눈에 보이지 않는 곳에서 메모리 관리를 수행합니다.
+
+// 원시값, 객체, 함수 등 우리가 만드는 모든 것은 메모리를 차지합니다.
+// 그렇다면 더는 쓸모 없어지게 된 것들은 어떻게 처리될까요?
+// 지금부터 자바스크립트 엔진이 어떻게 필요 없는 것을 찾아내 삭제하는지 알아보겠습니다.
+
+// 가비지 컬렉션 기준
+
+// 자바스크립트는 도달 가능성(reachability) 이라는 개념을 사용해 메모리 관리를 수행합니다.
+// '도달 가능한' 값은 쉽게 말해 어떻게든 접근하거나 사용할 수 있는 값을 의미합니다.
+// 도달 가능한 값은 메모리에 삭제되지 않습니다.
+
+// 1. 아래 소개해 드릴값들은 그 태생부터 도달 가능하기 때문에, 명백한 이유 없이는 삭제되지 않습니다.
+
+// - 현재 함수의 지역변수와 매개변수
+// - 중첩 함수의 체인에 있는 함수에서 사용되는 변수와 매개변수
+// - 전역 변수
+// - 기타 등등
+
+// 이런 값은 루트(root) 라고 부릅니다.
+
+// 2. 루트가 참조하는 값이나 체이닝으로 루트에서 참조할 수 있는 값은 도달 가능한 값이 됩니다.
+// 전역 변수에 객체가 저장되어있다고 가정해 봅시다.
+// 이 객체의 프로퍼티가 또 다른 객체를 참조하고 있다면, 프로퍼티가 참조하는 객체는 도달 가능한 값이 됩니다.
+// 이 객체가 참조하는 다른 모든 것들도 도달 가능하다고 여겨집니다.
+
+// 자바스크립트 엔진 내에선 '가비지 컬렉터'가 끊임없이 동작합니다.
+// 가비지 컬렉터는 모든 객체를 모니터링하고, 도달할 수 없는 객체는 삭제합니다.
+
+// 간단한 예시
+let obj1 = {
+    name: 'inHui'
+};
+
+// 전역변수 ob1 는 {nae:'inHui'} 이라는 객체를 참조합니다.
+// obj1 의 값을 다른 값으로 덮어쓰면 참조가 사라집니다.
+
+obj1 = null;
+
+// 이제 기존에 참조하던 객체에 도달할 수 없는 상태가 되었습니다.
+// 가비지 컬렉터는 이제 기존에 참조하던 객체의 데이터를 삭제하고 메모리에서 삭제합니다.
+
+// 참조 두 개
+let obj2 = {
+    name: 'inHui'
+};
+let obj2Cp = obj2;
+
+obj2 = null;
+
+// 전역 변수 obj2Cp 를 통하면 여전히 객체에 접근할 수 있기 때문에 객체({name: 'inHui'})는 메모리에서 삭제되지 않습니다.
+// 이 상태에서 obj2Cp를 다른 값으로 덮어씌우면 객체는 메모리에서 삭제될 수 있습니다.
+
+
+
+
+</script>

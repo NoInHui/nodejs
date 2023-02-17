@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+// 메서드와 this
+
+// 객체는 사용자,주문 등과 같이 실제 존재하는 개체를 표현하고자 할 때 생성됩니다.
+
+// 메서드 만들기
+
+let obj1 = {
+    name: 'inHui',
+    age: 30,
+    sayHi: function() {
+        console.log('sayHi', this.name + `(${this.age})` + ' hi');
+    }
+};
+
+obj1.sayHi();
+
+// 메서드와 this
+
+// 메서드는 객체에 저장된 정보에 접근할 수 있어야 제 역할을 할 수 있습니다.
+// 모든 메서드가 그런 건 아니지만, 대부분의 메서드가 객체 프로퍼티의 값을 활용합니다.
+
+// 메서드 내부에서 this 키워드를 사용하면 객체에 접근할 수 있습니다.
+// 이때 점(.) 앞의 this 는 객체를 나타냅니다.
+// 정확히는 메서드를 호출할 때 사용된 객체를 나타내죠.
+// 위 obj1.sayHi(); 를 보면 sayHi 메서드를 호출한건 obj1 입니다. 해서 obj1 객체가 this 가 됩니다.
+
+
+// 자유로운 this
+
+// 자바스크립트 this 는 다른 프로그래밍 언어의 this 와 동작 방식이 다릅니다.
+// 자바스크립트에선 모든 함수에 this 를 사용할 수 있습니다.
+
+// 아래와 같이 코드를 작성해도 문법 에러가 발생하지 않습니다 
+function func1() {
+    return this.name;
+}
+
+console.log('func1()',func1());
+
+// this 갑3ㅅ은 런타임에 결정됩니다. 컨텍스트에 따라 달라지죠.
+// 동일한 함수라도 다른 객체에서 호출했다면 this 가 참조하는 값이 달라집니다.
+
+let obj2 = {name: 'inhui'};
+let obj3 = {name: 'peter'};
+
+obj2.f = func1;
+obj3.f = func1;
+
+console.log('obj2.f()', obj2.f());
+console.log('obj3.f()', obj3.f());
+console.log(`obj3['f']()`,obj3['f']());
+
+// 규칙은 간단합니다.
+// obj.f() 를 호출했다면 this 는 f 를 호출하는 동안의 obj 입니다.
+
+// 객체 없이 호출하기
+
+function func2() {
+    // 'use strict'
+    return this;
+}
+
+console.log('func2',func2());
+
+// 위와 같은 코드를 엄격 모드에서 실행하면 this 에 undefined 가 할당됩니다. this.name 등으로 접근하려고 하면 에러가 발생하겠죠.
+// 그런데 엄격 모드가 아닐 때는 this 가 전역 객체를 참조합니다.
+// 브라우저 환경에선 window 라는 전역 객체를 참조하죠.
+// 이런 동작 차이는 use strict 가 도입된 배경이기도 합니다.
+
+
+// 자유로운 this 가 만드는 결과
+
+// 다른 언어를 사용하다 자바스크립트로 넘어온 개발자는 this 를 혼동하기 쉽습니다.
+// this 는 항상 메서드가 정의된 객체를 참조할 것이라고 착각하죠. 이런 개념을 bound this 라고 합니다.
+
+// 자바스크립트에서 this 는 런타임에 결정됩니다.
+// 메서드가 어디서 정의되었는지와 상관없이 this 는 '점 앞의' 객체가 무엇인가에 따라 자유롭게 결정됩니다.
+
+// 이렇게 this 가 런타임에 결정되면 좋은 점도 있고 나쁜 점도 있습니다.
+// 함수를 하나만 만들면 여러 객체에서 재사용할 수 있다는 것은 장점이지만, 이런 유연함이 실수로 이어질 수 있다는 것은 단점입니다.
+
+// 자바스크립트가 this 를 다루는 방식이 좋은지 나쁜지는 우리가 판단할 문제가 아닙니다.
+// 개발자는 this 의 동작 방식을 충분히 이해하고 장점을 취하면서 실수를 피하는 데만 집중하면 됩니다.
+
+
+// this 가 없는 화살표 함수
+
+// 화살표 함수는 일반 함수와는 달리 고유한 this 를 가지지 않습니다.
+// 화살표 함수에서 this 를 참조하면 화살표 함수가 아닌 평범한 외부 함수에서 this 값을 가져옵니다.
+// 자세한 내용은 별도로 화살표 함수 다시 살펴보기에서 다루겠습니다.
+
+</script>
