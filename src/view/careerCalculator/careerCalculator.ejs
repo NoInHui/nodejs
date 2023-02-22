@@ -127,8 +127,8 @@
                 <th>시작날짜</th>
                 <th>종료날짜</th>
                 <th>경력 적용일 수</th>
-                <th>경력 계산</th>
-                <th>경력 계산(년/월/일)</th>
+                <th>경력 개월 수</th>
+                <th>산정 연수</th>
             </tr>
         </thead>
         <tbody>
@@ -138,11 +138,22 @@
                     <td>{{careerTypeStr}}</td>
                     <td>{{startDate}}</td>
                     <td>{{endDate}}</td>
-                    <td>{{dateCnt}}</td>
-                    <td>{{calculateDateCnt}}</td>
-                    <td>{{calculateDateStr}}</td>
+                    <td>{{dateCnt}} 일</td>
+                    <td>{{monthCnt}} 개월</td>
+                    <td>{{calculateYearCnt}} 년</td>
                 </tr>
             {{/careerDataList}}
+            {{#careerDataExistYn}}
+            <tr class="careerDataSumView">
+                <td>합계</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{totalDateCnt}} 일</td>
+                <td>{{totalMonthCnt}} 개월</td>
+                <td>{{calculateTotalYearCnt}} 년</td>
+            </tr>
+            {{/careerDataExistYn}}
         </tbody>
     </table>
 

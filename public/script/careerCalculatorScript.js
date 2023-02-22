@@ -403,12 +403,16 @@ const careerCalculatorScript = {
 
         careerDataList.map((v,i) => {
             v.no = i+1;
+
+            v.monthCnt = parseInt(v.dateCnt / 30 * 10) / 10;
+
             if(v.careerType == 'teach') {
                 v.calculateDateCnt = parseInt(v.dateCnt * 0.7);
             } else if(v.careerType == 'office') {
                 v.calculateDateCnt = parseInt(v.dateCnt * 0.5);
             }
 
+            v.calculateYearCnt = parseInt(v.calculateDateCnt / 360 * 10) / 10;
             v.calculateDateStr = careerCalculatorScript.dateCntToStr(v.calculateDateCnt);
         });
 
@@ -433,7 +437,9 @@ const careerCalculatorScript = {
         },[]);
 
         let totalDateCnt = teachCareerDateList.length + officeCareerDateList.length;
+        let totalMonthCnt = parseInt(totalDateCnt / 30 * 10) / 10;
         let calculateDateCnt = parseInt((teachCareerDateList.length * 0.7) + (officeCareerDateList.length * 0.5));
+        let calculateTotalYearCnt = parseInt(calculateDateCnt / 360 * 10) / 10;
 
         let calculateStr = `
             강의경력:  ${teachCareerDateList.length} * 0.7 = ${teachCareerDateList.length * 0.7}<br/>
@@ -443,7 +449,7 @@ const careerCalculatorScript = {
 
         let resultInfo = {
             careerDataList,
-
+            careerDataExistYn: careerDataList.length > 0,
             educationDuplCnt: educationDuplDateList.length,
             careerDuplDateCnt: careerDuplDateList.length,
             educationDuplArr: careerCalculatorScript.setTableListArr(educationDuplDateList),
@@ -455,7 +461,9 @@ const careerCalculatorScript = {
             officeCareerDateArr: careerCalculatorScript.setTableListArr(officeCareerDateList),
 
             totalDateCnt,
+            totalMonthCnt,
             calculateDateCnt,
+            calculateTotalYearCnt,
             calculateDateStr: careerCalculatorScript.dateCntToStr(calculateDateCnt),
             calculateStr,
         };

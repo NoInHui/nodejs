@@ -131,3 +131,6 @@ table tbody tr th {
     margin-top: 10px;
 }
 
+.careerDataSumView > td {
+    border-top: 2px solid #0043a0;
+}
