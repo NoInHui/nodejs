@@ -182,7 +182,13 @@
                     {{&calculateStr}}
                 </td>
                 <td>{{calculateDateCnt}}</td>
-                <td>{{calculateDateStr}}</td>
+                <td>
+                    {{calculateDateStr}}
+                    {{#careerDataExistYn}}
+                        <br/>
+                        ( {{calculateTotalYearCnt}} 년 )
+                    {{/careerDataExistYn}}
+                </td>
             </tr>
         </tbody>
     </table>
