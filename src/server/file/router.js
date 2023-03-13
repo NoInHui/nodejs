@@ -32,7 +32,7 @@ const fileUploader = multer(
         storage: multer.diskStorage(
             {
                 destination: (req, file, cb) => {
-                    const path = getFilePath();
+                    const path = `public/save/fileuploader/`;
                     if(!fs.existsSync(path)) {
                         fs.mkdirSync(path, { recursive: true });
                     }
@@ -56,32 +56,10 @@ router.post('/upload/:filename', fileUploader.single('file'), (req, res) => {
 });
 
 router.get('/singleDownload', controller.singleDownload);
-
+router.post('/zipCreate', controller.zipCreate);
 router.post('/updateFileInfo', controller.updateFileInfo);
-
 router.post('/getFileInfo', controller.getFileInfo);
 
-function getFilePath() {
-    return `public/save/fileuploader/`
-}
 
-function getDateArr() {
-    let date = new Date();
-
-    let year = date.getFullYear().toString();
-    let month = date.getMonth()+1;
-    let day = date.getDate();
-    let hour = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-
-    month = month >= 10 ? month.toString() : '0' + month;
-    day = day >= 10 ? day.toString() : '0' + day;	
-    hour = hour >= 10 ? hour.toString() : '0' + hour;
-    minutes = minutes >= 10 ? minutes.toString() : '0' + minutes;
-    seconds = seconds >= 10 ? seconds.toString() : '0' + seconds;
-
-    return [year,month,day,hour,minutes,seconds];
-}
 
 module.exports = router;

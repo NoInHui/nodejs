@@ -62,7 +62,10 @@ class FileUploader {
                 `
                     <div class="option_area">
                         <div class="file_upload">
-                            <label class="button_upload">내 PC<span class="blind">에서 업로드</span><input id="button_fileUpload" type="file" class="blind button_fileUpload" multiple=""></label>
+                            <div>
+                                <label class="button_upload">내 PC<span class="blind">에서 업로드</span><input id="button_fileUpload" type="file" class="blind button_fileUpload" multiple=""></label>
+                                <label class="button_upload"><span class="button_zipDownload">모두저장</span></label>
+                            </div>
                             <p class="description">
                                 ${this.getFormatBytes(totalFileSize)}/${this.getFormatBytes(this.totalMaxSize)}
                             </p>
@@ -99,7 +102,7 @@ class FileUploader {
             });
 
             if(!this.uploadAuth) {
-                $(`#${this.id}`).find('.file_upload').remove();
+                $(`#${this.id}`).find('.file_upload').find('#button_fileUpload').closest('.button_upload').remove();
                 $(`#${this.id}`).find('.file_list_header').find('.file_list_header_status').remove();
                 $(`#${this.id}`).find('.file_list_header').find('.file_list_header_task').remove();
                 $(`#${this.id}`).find('.file_list').find('.task').remove();
@@ -140,15 +143,48 @@ class FileUploader {
 
     bindDownloadEvent() {
         const _class = this;
-
-        $('.file_list').find('.file_item').find('.file_title').on('click', function() {
+        
+        $(`#${this.id}`).find('.file_list').find('.file_item').find('.file_title').on('click', function() {
             let file = _class.fileList.find(v => v.real_file_name == $(this).closest('.file_item').attr('real_file_name'));
             if(file.uploaded) {
-                window.location = `/file/singleDownload?file_path=${file.file_path}&file_name=${file.file_name}`;    
+                _class.singleDownload(file);  
             } else {
                 alert('업로드 후 다운로드 가능합니다.');
             }
         });
+
+        $(`#${this.id}`).find('.button_zipDownload').on('click', function() {
+            _class.zipCreate();
+        });
+    }
+
+    singleDownload(file) {
+        window.location = `/file/singleDownload?file_path=${file.file_path}&file_name=${file.file_name}`;    
+    }
+
+    zipCreate() {
+        const _class = this;
+        let fileList = _class.fileList.filter(file => file.uploaded && file.use_yn == 'Y');
+
+        axios({
+            url: `/file/zipCreate`,
+            method: 'POST',
+            data: fileList
+        }).then(
+            response => {
+                if(response.status == 200) {
+                    _class.singleDownload(response.data);
+                }
+            },
+        ).catch(
+            error => {
+                alert('zip 다운로드 오류');
+                console.log('zip download error', error);
+                if($('.loading-layer').length > 0) {
+                    $('.loading-layer').hide();
+                }
+            }
+        );
     }
 
     bindUploadEvent() {
@@ -268,46 +304,6 @@ class FileUploader {
                 }
             }
         );
-
-        
-        // fetch(`/file/upload/${_class.newFileList[num].real_file_name}`, {
-        //     method: 'POST',
-        //     cache: 'no-cache',
-        //     body: formData,
-        // }).then(
-        //     response => {
-        //         if(response.ok) {
-        //             response.json().then(
-        //                 result => {
-        //                     console.log('file upload success', result.file);
-        //                     let file = result.file;
-        //                     $(`li.file_item[real_file_name="${_class.newFileList[num].real_file_name}"]`).find('.file_status').html(_class.getUploadStatusText(true));
-        //                     let callbackFile = _class.fileList.find(v => v.real_file_name == _class.newFileList[num].real_file_name);
-        //                     _class.newFileList[num].uploaded = true;
-        //                     callbackFile.uploaded = false;
-        //                     callbackFile.file_path = file.path.replace(/\\/gi, '/');
-                            
-        //                     num++;
-        //                     if(_class.newFileList.length > num) {
-        //                         _class.upload(callback, num);
-        //                     } else {
-        //                         if(callback) callback(_class.fileList);
-        //                     }
-        //                 }
-        //             )
-        //         }
-        //     },
-        // ).catch(
-        //     error => {
-        //         alert('파일 업로드 오류');
-        //         console.log('file upload error', error);
-        //         _class.newFileList[num].uploaded = false;
-        //         $(`li.file_item[real_file_name="${_class.newFileList[num].real_file_name}"]`).find('.file_status').html(_class.getUploadStatusText(false, error));
-        //         if($('.loading-layer').length > 0) {
-        //             $('.loading-layer').hide();
-        //         }
-        //     }
-        // );
     }
 
     convertFileJson(file) {
