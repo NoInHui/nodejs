@@ -20,6 +20,14 @@
             </section>
         </div>
     </div>
+    <div class="loading-layer" style="display: none;">
+        <div class="loading-wrap">
+            <div class="loading-container">
+                <div class="loading"></div>
+                <div id="loading-text"><span class="gvc_tit"></span><div id="timer"></div></div>
+            </div>
+        </div>
+    </div>
 </body>
 
 <div id="save_dialog" style="display: none;">
@@ -65,5 +73,13 @@
         $('section.body-section').load(url, function() {
             // init();
         });
+    }
+
+    function loadingFunc() {
+        if($('.loading-layer').css('display') == 'none') {
+            $('.loading-layer').show();
+        } else {
+            $('.loading-layer').hide();
+        }
     }
 </script>

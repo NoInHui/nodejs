@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>upload</title>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; width: 1500PX;">
+            <div id="fileuploader"></div>
+            <div class="btn_foo">
+                <button type="button" class="btn-submit blue">저장</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const uploadPageScript = {
+
+        fileUploader: null,
+
+        init : async function() {
+            this.getFileInfo();            
+            $('button.btn-submit').click(function() {
+                loadingFunc();
+                uploadPageScript.fileUploader.upload(uploadPageScript.uploadCallBack);
+            });
+        },
+
+        getFileInfo : function() {
+            fetch('/file/getFileInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                },
+            }).then(response => {
+                if(response.ok) {
+                    response.json().then(v => {
+                        uploadPageScript.createFileUploader(v.fileList);
+                    });
+                } else {
+                    console.log(response);
+                    alert('error');
+                }
+            }).catch(error => {
+                console.log(error);
+                alert('error');
+            });
+        },
+
+        createFileUploader : function(fileList) {
+            uploadPageScript.fileUploader = new FileUploader({
+                id: 'fileuploader', 
+                fileList : fileList, 
+                uploadAuth : true,
+                totalMaxSize : 10737418240,
+                // maxSize : 2147483648,
+            });
+        },
+
+        uploadCallBack : function(fileList) {
+            fileList = fileList.reduce((acc,cur,i) => {
+                if(!(cur.uploaded && cur.use_yn == 'N')) {
+                    acc.push(cur);
+                }
+                return acc;
+            }, []);
+
+            fetch('/file/updateFileInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                },
+                body: JSON.stringify({fileList}),
+            }).then(response => {
+                loadingFunc();
+                if(response.ok) {
+                    alert('file upload complete');
+                    $('.sidebar-link[page="/file/uploadPage"]').click();
+                } else {
+                    console.log(response);
+                    alert('error');
+                }
+            }).catch(error => {
+                console.log(error);
+                alert('error');
+                loadingFunc();
+            });
+        }
+    }
+    uploadPageScript.init();
+</script>

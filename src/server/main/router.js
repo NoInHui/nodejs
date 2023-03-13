@@ -5,11 +5,8 @@ const refererCheck = require("../middlewares/refererCheck");
 
 router.get('/', refererCheck, controller.main);
 router.get('/noRedirect', controller.noRedirect);
-
 router.get('/careerCalculator', controller.careerCalculator);
 router.get('/editor', controller.editor);
-router.get('/uploadPage', controller.uploadPage);
-
 router.post('/save', controller.saveFile);
 router.post('/load', controller.loadFileList);
 router.post('/loadFile', controller.loadFile);

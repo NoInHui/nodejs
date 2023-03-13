@@ -15,10 +15,6 @@ exports.editor = async function(req, res) {
     res.render('editor/editor', {pageName});
 }
 
-exports.uploadPage = async function(req, res) {
-    res.render('upload/upload');
-}
-
 exports.study = async function(req, res) {
     const {category, page} = req.params;
     const {pageName} = req.query;
