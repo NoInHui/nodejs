@@ -7,9 +7,17 @@
     <script type="text/javascript" src="/script/careerCalculatorScript.js"></script>
 </head>
 <body>
-    <div style="width: 100%; display: flex; justify-content: center;">
+    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <div class="careerCalculator-header">
+            <h1 class="careerCalculator-header-h1">
+                <span class="careerCalculator-header-logo"><%=pageName%></span>
+                <span class="careerCalculator-header-divider"></span>
+                <span class="careerCalculator-header-loadFileInfo fileName"></span>
+                <span class="careerCalculator-header-divider"></span>
+                <span class="careerCalculator-header-loadFileInfo regDate"></span>
+            </h1>
+        </div>
         <div style="padding: 10px 20px; border: 1px solid black; background: #dbdbdb8c;">
-            <div style="font-size: 13pt; font-weight: bold; margin-bottom: 20px;"><%=pageName%></div>
             <div class="button-area">
                 <div>
                     <button name="addRowBtn" type="education" style="background: #297063;">학력사항 추가</button>
@@ -17,6 +25,7 @@
                 </div>
                 <div>
                     <button id="setSampleBtn" style="background: #34459f;">Sample Set</button>
+                    <button id="resetBtn" style="background: #34459f;">Reset</button>
                     <button id="saveBtn" style="background: #34459f;">저장</button>
                     <button id="loadBtn" style="background: #34459f;">불러오기</button>
                     <button id="setResultBtn" style="background: #34459f;">경력계산</button>

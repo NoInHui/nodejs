@@ -23,8 +23,10 @@ class periodData {
 
 const careerCalculatorScript = {
     filePath : 'public/save/careerCalculator/',
+    realFileName : '',
 
     init : async function() {
+        this.changeLoadFileInfo();
         this.setCommonEvent();
         // this.addRow('education');
         // this.addRow('career');
@@ -45,9 +47,13 @@ const careerCalculatorScript = {
         $('#setSampleBtn').click(function() {
             careerCalculatorScript.setSample();
         });
+
+        $('#resetBtn').click(function() {
+            careerCalculatorScript.reset();
+        });
     
         $('#saveBtn').click(function() {
-            $('#file_name').val(getDefaultFileName(new Date()));
+            $('#file_name').val($('.careerCalculator-header-loadFileInfo.fileName').text());
             $('#save_dialog').dialog({
                 width: 240,
                 title: '저장',
@@ -95,21 +101,21 @@ const careerCalculatorScript = {
             $('#load_dialog').html(Mustache.render($('#load_dialog_template').html(), {fileData : resultData.fileData.reverse()}));
             $('#load_dialog').dialog({
                 title: '불러오기',
-                width: 300,
+                width: 450,
                 modal: true,
                 resizable: false,
                 draggable: false,
             });
 
             $('[name="load_link"]').click(function() {
-                let fileName = $(this).text();
-                let fileInfo = resultData.fileData.find(v => v.fileName == fileName).fileInfo;
-                careerCalculatorScript.loadData(fileInfo);
+                let realFileName = $(this).closest('ul').attr('realFileName');
+                let fileInfo = resultData.fileData.find(v => v.realFileName == realFileName).fileInfo;
+                careerCalculatorScript.loadData(realFileName, fileInfo);
             });
 
             $('.delete_load').click(function() {
-                let fileName = $(this).closest('ul').find('[name="load_link"]').text();
-                careerCalculatorScript.delete(fileName);
+                let realFileName = $(this).closest('ul').attr('realFileName');
+                careerCalculatorScript.delete(realFileName);
             });
         } else {
             alertDialog('시스템 오류 발생');
@@ -130,15 +136,22 @@ const careerCalculatorScript = {
         });
 
         let fileInfo = {
+            fileName: $('#file_name').val().trim(),
             career: careerDataList,
-            education: educationDataList
+            education: educationDataList,
+            regDate : careerCalculatorScript.getRegDate(),
         };
 
         let param = {
-            filePath: careerCalculatorScript.filePath,
-            fileName: $('#file_name').val().trim() + '.json',
+            filePath: careerCalculatorScript.filePath, 
             fileInfo: JSON.stringify(fileInfo),
         };
+
+        if(careerCalculatorScript.realFileName) {
+            $.extend(param, {realFileName: careerCalculatorScript.realFileName, uploaded: true});
+        } else {
+            $.extend(param, {realFileName: careerCalculatorScript.getRealFileName(), uploaded: false});
+        }
 
         let response = await fetch('/save'
             , {
@@ -151,6 +164,8 @@ const careerCalculatorScript = {
         );
 
         if(response.ok) {
+            careerCalculatorScript.realFileName = param.realFileName;
+            careerCalculatorScript.changeLoadFileInfo(fileInfo);
             alertDialog('저장완료');
             $('#save_dialog').dialog('close');
         } else {
@@ -158,7 +173,54 @@ const careerCalculatorScript = {
         }
     },
 
-    loadData : function(fileInfo) {
+    changeLoadFileInfo : function(fileInfo) {
+        if(careerCalculatorScript.realFileName) {
+            $('.careerCalculator-header-divider').show();
+            $('.careerCalculator-header-loadFileInfo').show();
+            $('.careerCalculator-header-loadFileInfo.fileName').text(fileInfo.fileName);
+            $('.careerCalculator-header-loadFileInfo.regDate').text(fileInfo.regDate);
+        } else {
+            $('.careerCalculator-header-divider').hide();
+            $('.careerCalculator-header-loadFileInfo').hide();
+            $('.careerCalculator-header-loadFileInfo').text('');
+        }
+    },
+
+    getRegDate : function() {
+        let dateArr = careerCalculatorScript.getDateArr();
+        return `${dateArr[0]}-${dateArr[1]}-${dateArr[2]} ${dateArr[3]}:${dateArr[4]}`;
+    },
+
+    getRealFileName : function() {
+        let dateArr = careerCalculatorScript.getDateArr();
+        let realFileName = Math.floor(Math.random() * 100000);
+        realFileName += dateArr.join('') + '.json';
+        return realFileName;
+    },
+
+    getDateArr : function() {
+        let date = new Date();
+
+        let year = date.getFullYear().toString();
+        let month = date.getMonth()+1;
+        let day = date.getDate();
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+
+        month = month >= 10 ? month.toString() : '0' + month;
+        day = day >= 10 ? day.toString() : '0' + day;	
+        hour = hour >= 10 ? hour.toString() : '0' + hour;
+        minutes = minutes >= 10 ? minutes.toString() : '0' + minutes;
+        seconds = seconds >= 10 ? seconds.toString() : '0' + seconds;
+
+        return [year,month,day,hour,minutes,seconds];
+    },
+
+    loadData : function(realFileName, fileInfo) {
+        careerCalculatorScript.realFileName = realFileName;
+        careerCalculatorScript.changeLoadFileInfo(fileInfo);
+
         $('div.result-area').html('');
         $('table.education-table').find('tbody').find('tr').remove();
         $('table.career-table').find('tbody').find('tr').remove();
@@ -183,10 +245,10 @@ const careerCalculatorScript = {
         $('#load_dialog').dialog('close');
     },
 
-    delete : async function(fileName) {
+    delete : async function(realFileName) {
         let param = {
             filePath: careerCalculatorScript.filePath,
-            fileName,
+            realFileName,
         };
 
         let response = await fetch('/delete'
@@ -200,6 +262,10 @@ const careerCalculatorScript = {
         );
 
         if(response.ok) {
+            if(realFileName == careerCalculatorScript.realFileName) {
+                careerCalculatorScript.realFileName = '';
+                careerCalculatorScript.changeLoadFileInfo();
+            }
             careerCalculatorScript.load();
         } else {
             alertDialog('시스템 오류 발생');
@@ -242,6 +308,19 @@ const careerCalculatorScript = {
             trObj.find('[name="search_start_date"]').val(v.startDate);
             trObj.find('[name="search_end_date"]').val(v.endDate);
         });
+    },
+
+    reset : async function() {
+        careerCalculatorScript.realFileName = '';
+        careerCalculatorScript.changeLoadFileInfo();
+
+        $('table.education-table').find('tbody').find('tr').remove();
+        $('table.career-table').find('tbody').find('tr').remove();
+
+        careerCalculatorScript.addRow('education');
+        careerCalculatorScript.addRow('career');
+
+        $('.result-area').html('');
     },
 
     addRow : function(type) {

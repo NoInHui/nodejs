@@ -41,11 +41,14 @@
 <script id="load_dialog_template" type="x-tmpl-mustache">
     <div>
         {{#fileData}}
-            <ul>
+            <ul realFileName="{{realFileName}}">
                 <li>
-                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileName}}</a>
+                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileInfo.fileName}}</a>
                 </li>
-                <li style="max-width: 30px;">
+                <li style="max-width:110px">
+                    <a name="load_link" href="#" style="text-decoration: underline;">{{fileInfo.regDate}}</a>
+                </li>
+                <li style="max-width: 40px;">
                     <button class="delete_load" style="cursor:pointer;">-</button>
                 </li>
             </ul>

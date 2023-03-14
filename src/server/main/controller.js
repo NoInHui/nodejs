@@ -28,7 +28,7 @@ exports.noRedirect = async function(req, res) {
 exports.saveFile = async function(req, res) {
     const param = req.body;
     try {
-        fs.writeFileSync(`${param.filePath}${param.fileName}`,param.fileInfo, 'utf8');
+        fs.writeFileSync(`${param.filePath}${param.realFileName}`,param.fileInfo, 'utf8');
         return res.status(200).json({ id: '200', message: 'success'});
     } catch(e) {
         console.log(e);
@@ -41,9 +41,9 @@ exports.loadFileList = async function(req, res) {
         const param = req.body;
         let fileList = fs.readdirSync(param.filePath);
         let fileData = new Array();
-        for await (fileName of fileList) {
-            let fileInfo = fs.readFileSync(`${param.filePath}${fileName}`, 'utf8');
-            fileData.push({fileName,fileInfo});
+        for await (realFileName of fileList) {
+            let fileInfo = fs.readFileSync(`${param.filePath}${realFileName}`, 'utf8');
+            fileData.push({realFileName,fileInfo});
         }
         return res.status(200).json({ id: '200', message: 'success', fileData});
     } catch(e) {
@@ -70,7 +70,7 @@ exports.loadFile = async function(req, res) {
 exports.deleteFile = async function(req, res) {
     const param = req.body;
     try {
-        fs.unlinkSync(`${param.filePath}${param.fileName}`);
+        fs.unlinkSync(`${param.filePath}${param.realFileName}`);
         return res.status(200).json({ id: '200', message: 'success'});
     } catch(e) {
         console.log(e);
