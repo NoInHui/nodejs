@@ -64,7 +64,7 @@ function setEditor(editor, content = '', writeAuth) {
       sSkinURI: "/lib/smarteditor2-2.9.1/SmartEditor2Skin.html",	
       htParams : htParams,
       fOnAppLoad : function(){
-          editor.editor.getById[editor.id].setDefaultFont("Noto Sans KR", 12);
+          editor.editor.getById[editor.id].setDefaultFont("Noto Sans KR", 10);
           editor.editor.getById[editor.id].exec("PASTE_HTML", [content]);
 
           if(!writeAuth) {

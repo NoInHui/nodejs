@@ -186,10 +186,11 @@ body {
 
 #save_dialog #file_name {
     font-size: 11pt;
-    width: 200px;
+    width: 98%;
     border: 1px solid black;
-    text-align: center;
     height: 25px;
+    margin: 2px;
+    padding-left: 5px;
 }
 
 #load_dialog {

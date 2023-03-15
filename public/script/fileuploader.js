@@ -165,6 +165,10 @@ class FileUploader {
     zipCreate() {
         const _class = this;
         let fileList = _class.fileList.filter(file => file.uploaded && file.use_yn == 'Y');
+        
+        if($('.loading-layer').length > 0) {
+            $('.loading-layer').show();
+        }
 
         axios({
             url: `/file/zipCreate`,
@@ -172,6 +176,9 @@ class FileUploader {
             data: fileList
         }).then(
             response => {
+                if($('.loading-layer').length > 0) {
+                    $('.loading-layer').hide();
+                }
                 if(response.status == 200) {
                     _class.singleDownload(response.data);
                 }

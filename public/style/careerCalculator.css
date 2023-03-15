@@ -70,7 +70,7 @@ table tbody tr th {
     border-radius: 3px;
     border: none;
     outline: none;
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: 0;
     line-height: 25px;
     color: #fff;
@@ -180,4 +180,37 @@ table tbody tr th {
     line-height: 1.25;
     color: #a7cdf3;
     max-width: 230px;
+}
+
+.file_drag {
+    padding: 60px 10px;
+}
+
+.file_attachments_inner .file_list {
+    max-height: 125px;
+    min-height: 125px;
+}
+
+.memo-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.memo-table tbody tr:first-child {
+    border-top: 2px solid #0043a0 !important;
+}
+
+.memo-table tbody tr {
+    min-height: 40px !important;
+}
+
+.memo-table tbody tr th {
+    font-size: 10pt;
+    background-color: #f2f7fc !important;
+    color: #0043c0;
+    vertical-align: middle;
+}
+
+.memo-table tbody tr td {
+    border: 1px solid #8e8b7a;
 }

@@ -17,7 +17,7 @@
                 <span class="careerCalculator-header-loadFileInfo regDate"></span>
             </h1>
         </div>
-        <div style="padding: 10px 20px; border: 1px solid black; background: #dbdbdb8c;">
+        <div style="padding: 10px 20px; border: 1px solid black; background: #dbdbdb8c; margin-bottom: 50px;">
             <div class="button-area">
                 <div>
                     <button name="addRowBtn" type="education" style="background: #297063;">학력사항 추가</button>
@@ -25,7 +25,7 @@
                 </div>
                 <div>
                     <button id="setSampleBtn" style="background: #34459f;">Sample Set</button>
-                    <button id="resetBtn" style="background: #34459f;">Reset</button>
+                    <button id="resetBtn" style="background: #34459f;">초기화</button>
                     <button id="saveBtn" style="background: #34459f;">저장</button>
                     <button id="loadBtn" style="background: #34459f;">불러오기</button>
                     <button id="setResultBtn" style="background: #34459f;">경력계산</button>
@@ -81,6 +81,29 @@
                     </table>
                 </div>
                 <div class="result-area">
+                </div>
+                <div>
+                    <h2>메모/첨부파일</h2>
+                    <table class="memo-table">
+                        <colgroup>
+                            <col style="width:10%;"/>
+                            <col style="width:90%;"/>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>메모</th>
+                                <td>
+                                    <textarea id="editor" style="width:98%;height:200px;"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>첨부파일</th>
+                                <td>
+                                    <div id="fileuploader" style="margin:5px;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -52,7 +52,7 @@ const studyScript = {
     save : async function(fileInfo, updateFlag) {
         let param = {
             filePath: `public/save/study/${studyScript.category}/`,
-            fileName : `${studyScript.page}.html`,
+            realFileName : `${studyScript.page}.html`,
             fileInfo: fileInfo ? fileInfo : '',
         };
     
