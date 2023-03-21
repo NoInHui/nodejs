@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+// 프로토타입 상속
+
+// 개발을 하다 보면 기존에 있는 기능을 가져와 확장해야 하는 경우가 생깁니다.
+
+// 사람에 관한 프로퍼티와 메서드를 가진 user 라는 객체가 있습니다.
+// user 와 상당히 유사하지만 약간의 차이가 있는 admin, guest 객체를 만들어야 한다고 가정해 봅시다.
+// 이때 user 의 메서드를 복사하거나 다시 구현하지 않고 user 에 약간의 기능을 얹어 admin, guest 객체를 만들 수 있지 않을까? 라는 생각이 들 겁니다.
+
+
+// [[Prototype]]
+
+// 자바스크립트의 객체는 명세서에서 명명한 [[Prototype]] 이라는 숨김 프로퍼티를 갖습니다.
+// 이 숨김 프로퍼티 값은 null 이거나 다른 객체에 대한 참조가 되는데, 다른 객체를 참조하는 경우 참조 대상을 '프로토타입(prototype)' 이라 부릅니다.
+
+// obj -> [[Prototype]] -> prototype object
+
+// 프로토타입의 동작 방식은 신비스러운 면이 있습니다.
+// object 에서 프로퍼티를 읽으려고 하는데 해당 프로퍼티가 없으면 자바스크립트는 자동으로 프로토타입에서 프로퍼티를 찾기 때문이죠.
+// 프로그래밍에선 이런 동작 방식을 '프로토타입 상속'이라 부릅니다.
+// 언어 차원에서 지원하는 편리한 기능이나 개발 테크닉 중 프로토타입 상속에 기반해 만들어진 것들이 많습니다.
+
+// [[Prototype]] 프로퍼티는 내부 프로퍼티이면서 숨김 프로퍼티이지만 다양한 방법을 사용해 개발자가 값을 설정할 수 있습니다.
+
+// __proto__ 는 [[Prototype]] 용 getter, setter 입니다.
+
+// __proto__ 는 [[Prototype]] 과 다릅니다.
+// __proto__ 는 [[Prototype]] 의 getter 이자 setter 입니다.
+// 하위 호환성 때문에 여전히 __proto__ 를 사용할 순 있지만 비교적 근래에 작성된 스크립트에선 __proto__ 대신 함수 Object.getPrototypeOf 나 Object.setPrototypeOf 을 써서 프로토타입을 get 하거나 set 합니다.
+// 근래엔 왜 __proto__ 을 쓰지 않는지와 두 함수의 자세한 설명에 대해선 이어지는 챕터에서 다룰 예정입니다.
+
+// __proto__ 는 브라우저 환경에서만 지원하도록 자바스크립트 명세서에서 규정하였는데, 실상은 서버 사이드를 포함한 모든 호스트 환경에서 __proto__ 를 지원합니다.
+// [[Prototype]] 보다는 __proto__ 가 조금 더 직관적이어서 이해하기 쉬우므로, 본 듀토리얼의 예시에선 __proto__ 를 사용하도록 하겠습니다.
+
+
+// 아래 예시처럼 특별한 이름인 __proto__ 을 사용하면 값을 설정할 수 있습니다.
+
+let obj1 = {
+    eats : true
+};
+
+let obj2 = {
+    jumps : true
+};
+ 
+obj2.__proto__ = obj1;
+
+console.log(obj2.jumps);
+
+// 객체 obj2 에서 프로퍼티를 얻고싶은데 해당 프로퍼티가 없다면, 자바스크립트는 자동으로 obj1 이라는 객체에서 프로퍼티를 얻습니다.
+
+// obj2 의 프로토타입은 obj1 입니다. 혹은 obj2는 obj1 을 상속받는다. 라고 말 할 수 있게 되었습니다.
+// 프로토타입을 설정해 준 덕분에 obj2 에서도 obj1 에 구현된 유용한 프로퍼티와 메서드를 사용할 수 있게 되었네요.
+// 이렇게 프로토타입에서 상속받은 프로퍼티를 '상속 프로퍼티(inherited property)' 라고 부릅니다.
+
+let obj3 = {
+    eats : true,
+    walk() {
+        return 'obj3 walk';
+    }
+};
+
+let obj4 = {
+    jumps : true,
+    __proto__ : obj3,
+};
+
+
+console.log(obj4.eats);
+// 메서드 walk 는 obj4 의 프로토타입인 obj3 에서 상속받았습니다.
+console.log(obj4.walk());
+
+
+// 프로토타입 체인은 지금까지 살펴본 예시들보다 길어질 수 있습니다.
+
+let obj5 = {
+    eats: true,
+    walk() {
+        return 'obj5 walk';
+    }
+};
+
+let obj6 = {
+    jumps: true,
+    __proto__ : obj5
+};
+
+let obj7 = {
+    earLength: 10,
+    __proto__ : obj6
+};
+
+// 메서드 walk 는 프로토타입 체인을 통해 상속받았습니다.
+console.log(obj7.walk());
+
+
+// 프로토타입 체이닝엔 두 가지 제약사항이 있습니다.
+
+// 1. 순환 참조(circular reference)는 허용되지 않습니다. __proto__ 를 이용해 닫힌 형태로 다른 객체를 참조하면 에러가 발생합니다.
+// 2. __proto__ 의 값은 객체나 null 만 가능합니다. 다른 자료형은 무시됩니다.
+
+// 여기에 더하여 객체엔 오직 하나의 [[Prototype]] 만 있을 수 있다는 당연한 제약도 있습니다.
+// 객체는 두 개의 객체를 상속받지 못합니다.
+
+
+// 프로토타입은 읽기 전용이다.
+
+// 프로토타입은 프로퍼티를 읽을 때만 사용합니다.
+// 프로퍼티를 추가, 수정하거나 지우는 연산은 객체에 직접 해야 합니다.
+
+let obj8 = {
+    eats: true,
+    walk() {
+
+    }
+}
+
+let obj9 = {
+    __proto__ : obj8
+};
+
+obj9.walk = function() {
+    return 'obj9.walk';
+}
+
+console.log('obj9.walk()', obj9.walk());
+console.log('obj8.walk()', obj8.walk());
+
+// obj9.walk() 를 호출하면 프로토타입에 있는 메서드가 실행되지 않고, 객체 obj9 에 직접 추가한 메서드가 실행됩니다.
+
+// 그런데 접근자 프로퍼티는 setter 함수를 사용해 프로퍼티 값을 할당하므로 접근자 프로퍼티에 값을 할당하면 객체에 프로퍼티가 추가되는게 아니라 setter 함수가 호출되면서 위 예시와는 조금 다르게 동작합니다.
+
+let obj10 = {
+    name: 'john',
+    surname: 'smith',
+
+    set fullname(value) {
+        [this.name, this.surname] = value.split(' ');
+    },
+
+    get fullname() {
+        return `${this.name} ${this.surname}`;
+    }
+};
+
+let obj11 = {
+    __proto__: obj10,
+    isAdmin: true,
+};
+
+console.log(obj11.fullname);
+
+console.log('obj11 set before', obj11);
+obj11.fullname = 'noh inhui'; // setter
+console.log('obj11 set after', obj11); // obj11 에 name, surname 프로퍼티가 생성됨
+
+// 위 setter 에 의해 추가된 obj11 의 프로퍼티(name, surname) 에서 값을 가져옴
+console.log('obj11.fullname', obj11.fullname);
+// 본래 obj10 에 있었던 프로퍼티 값을 가져옴
+console.log('obj10.fullname', obj10.fullname);
+
+// this 가 나타내는 것
+
+// 위 예시를 보면 set fullname(value) 본문의 this 엔 어떤 값이 들어가지? 라는 의문을 가질 수 있습니다.
+// 프로퍼티 this.name 과 this.surname 에 값을 쓰면 그 값이 obj10 에 저장될까, 아니면 obj11 에 저장될까? 라는 의문도 생길 수 있죠.
+
+// 답은 간단합니다. this 는 프로토타입에 영향을 받지 않습니다.
+
+// 메서드를 객체에서 호출했던 프로토타입에서 호출했든 상관없이 this는 언제나 . 앞에 있는 객체입니다.
+
+// obj11.fullname= 으로 setter 함수를 호출할 때 this 는 obj10 이 아닌 obj11 이 되죠.
+
+// 객체 하나를 만들고 여기에 메서드를 많이 구현해 놓은 다음, 여러 객체에서 이 커다란 객체를 상속받게 하는 경우가 많기 때문에 이런 특징을 잘 알아두셔야 합니다.
+// 상속받은 메서드를 사용하더라도 객체는 프로토타입이 아닌 자신의 상태를 수정합니다.
+
+// 예시를 통해 좀 더 알아보겠습니다.
+
+let obj12 = {
+    walk() {
+        if(!this.isSleeping) {
+            return 'walking';
+        } else {
+            return 'sleeping'
+        }
+    },
+    sleep() {
+        this.isSleeping = true;
+    }
+};
+
+let obj13 = {
+    name: 'inhui',
+    __proto__ : obj12,
+};
+
+obj13.sleep();
+
+console.log('obj12.isSleeping', obj12.isSleeping); // 프로토타입에는 isSleeping 이라는 프로퍼티가 없습니다.
+console.log('obj13.isSleeping', obj13.isSleeping);
+
+// 이를 통해 우리는 메서드는 공유되지만, 객체의 상태는 공유되지 않는다고 결론 내릴 수 있습니다.
+
+
+// for..in 반복문
+
+// for..in 은 상속 프로퍼티도 순회대상에 포함시킵니다.
+
+let obj14 = {
+    eats: true
+};
+
+let obj15 = {
+    __proto__ : obj14,
+    jumps: true,
+};
+
+// Object.keys 는 객체 자신의 키만 반환합니다.
+console.log('Object.keys(obj15)', Object.keys(obj15));
+
+// for..in 은 객체 자신의 키와 상속 프로퍼티의 키 모두를 순회합니다.
+for(let key in obj15) console.log(key);
+
+// obj.hasOwnProperty(key) 를 이용하면 상속 프로퍼티를 순회 대상에서 제외할 수 있습니다.
+// 이 내장 메서드는 key 에 대응하는 프로퍼티가 상속 프로퍼티가 아니고 obj 에 직접 구현되어있는 프로퍼티일 때만 true 를 반환합ㄴ디ㅏ.
+
+// obj.hasOwnProperty(key) 를 응용하면 아래 예시처럼 상속 프로퍼티를 걸러낼 수 있고, 상속 프로퍼티만을 대상으로 무언가를 할 수도 있습니다.
+
+for(let key in obj15) {
+    if(obj15.hasOwnProperty(key)) {
+        console.log(`객체 자신의 property : ${key}`);
+    } else {
+        console.log(`상속 property : ${key}`);
+    }
+}
+
+// 키-값을 순회하는 메서드 대부분은 상속 프로퍼티를 제외하고 동작합니다.
+
+// Object.keys, Object.values 같이 객체의 키-값을 대상으로 무언가를 하는 메서드 대부분은 상속 프로퍼티를 제외하고 동작합니다.
+// 프로토타입에서 상속받은 프로퍼티는 제외하고, 해당 객체에서 정의한 프로퍼티만 연산 대상에 포함합니다.
+
+
+// 요약
+
+// 자바스크립트의 모든 객체엔 숨김 프로퍼티 [[Prototype]] 이 있는데, 이 프로퍼티는 객체나 null 을 가리킵니다.
+// obj.__proto__ 를 사용하면 프로토타입에 접근할 수 있습니다. 
+// __proto__ 는 [[Prototype]] 의 getter, setter 로 쓰이는데, 요즘엔 잘 쓰지 않습니다. 
+// [[Prototype]] 이 참조하는 객체를 '프로토타입' 이라고 합니다.
+// 객체에서 프로퍼티를 읽거나 메서드를 호출하려는데 해당하는 프로퍼티나 메서드가 없으면 자바스크립트는 프로토타입에서 프로퍼티나 메서드를 찾습니다.
+// 접근자 프로퍼티가 아닌 데이터 프로퍼티를 다루고 있다면, 쓰기나 지우기와 관련 연산은 프로토타입을 통하지 않고 객체에 직접 적용됩니다.
+// 프로토타입에서 상속받은 method 라도 obj.method() 를 호출하면 method 안의 this 는 호출 대상 객체인 obj 를 가리킵니다.
+// for..in 반복문은 객체 자체에서 정의한 프로퍼티뿐만 아니라 상속 프로퍼티도 순회 대상에 포함합니다.
+// 반면, 키-값 과 관련된 내장 메서드 대부분은 상속 프로퍼티는 제외하고 객체 자체 프로퍼티만을 대상으로 동작합니다.
+
+</script>
