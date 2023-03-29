@@ -31,5 +31,47 @@
 </html>
 
 <script>
-    
+
+// 배열과 메서드
+
+// 배열은 다양한 메서드를 제공합니다.
+
+let arr = [];
+
+// 요소 추가,제거 메서드
+arr.push('1','2') // 맨 끝에 요소 추가
+arr.pop(); // 맨 끝 요소 제거
+arr.shift() // 맨 앞 요소 제거
+arr.unshift('3','4') // 맨 앞에 요소 추가
+
+
+// splice
+
+// arr.splice(index[, deleteCount, ele1,ele2,...,eleN])
+let arr2 = ['1','2','3'];
+arr2.splice(1,1,'4','5','6');
+console.log(arr2);
+
+// 첫 번째 매개변수는 조작을 가할 첫 번째 요소를 가리키는 인덱스
+// 두 번째 매개변수는 제거하고자 하는 요소의 개수
+// 나머지 매개변수는 배열에 추가할 요소를 나타냄
+
+
+// slice
+
+// arr.slice([start],[end])
+
+// 이 메서드는 start 인덱스부터 end 인덱스까지의 요소를 복사한 새로운 배열을 반환합니다.
+
+let arr3 = [1,2,3,4,5];
+console.log(arr3.slice(1,3));
+console.log(arr3.slice(-2));
+
+// arr.slice() 는 인수를 하나도 넘기지 않고 호출하여 arr 의 복사본을 만들 수 있습니다.
+// 이런 방식은 기존의 배열을 건드리지 않으면서 배열을 조작해 새로운 배열을 만들고자 할 떄 자주 사용됩니다.
+
+
+
+
+
 </script>
