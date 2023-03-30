@@ -31,5 +31,82 @@
 </html>
 
 <script>
-    
+
+// Object.keys, values, entries
+
+// 개별 자료 구조에서 한발 뒤로 물러나 순회(iteration)에 대해 이야기 나누어봅시다.
+
+// 이전 챕터에서 우리는 순회에 필요한 메서드 map.keys(), map.values(), map.entries() 에 대해 알아보았습니다.
+
+// 이 메서드들은 포괄적인 용도로 만들어졌기 때문에 메서드를 적용할 자료구조는 일련의 합의를 준수해야 합니다.
+// 커스텀 자료구조를 대상으로 순회를 해야 한다면 이 메서드들을 쓰지 못하고 직접 메서드를 구현해야 합니다.
+
+// keys(), values(), entries() 를 사용할 수 있는 자료구조는 다음과 같습니다.
+// Map, Set, Array
+
+// 일반 객체에도 순회 관련 메서드가 있긴 한데, keys(), values(), entries() 와는 문법에 차이가 있습니다.
+
+// Object.keys, values, entries
+
+// 일반 객체엔 다음과 같은 메서드를 사용할 수 있습니다.
+
+// Object.keys(obj) - 객체의 키만 담은 배열을 반환합니다.
+// Object.values(obj) - 객체의 값만 담은 배열을 반환합니다.
+// Object.entries(obj) - [키,값] 쌍을 담은 배열을 반환합니다.
+
+// Map, Set, Array 전용 메서드와 일반 객체용 메서드의 차이를 비교하면 다음과 같습니다.
+
+// Map - 호출문법: map.keys() , 반환 값 : iterable 객체
+// 객체 - 호출문법: Object.keys(obj) , 반환 값 : '진짜'배열
+
+// 첫 번째 차이는 obj.keys() 가 아닌 Object.keys(obj) 를 호출한다는 점입니다.
+
+// 이렇게 문법이 다른 이유는 유연성 때문입니다.
+// 이사디시피 자바스크립트에선 복잡한 자료구조 전체가 객체에 기반합니다.
+// 그러다 보니 객체 data 에 자체적으로 data.values() 라는 메서드를 구현해 사용하는 경우가 있을 수 있습니다.
+// 이렇게 커스텀 메서드를 구현한 상태라도 Object.values(data) 같은 형태로 메서드를 호출할 수 있으면 커스텀 메서드와 내장 메서드 둘 다를 사용할 수 있습니다.
+
+// 두 번째 차이는 메서드 Object.* .를 호출하면 iterable 객체가 아닌 객체의 한 종류인 배열을 반환한다는 점입니다.
+// '진짜' 배열을 반환하는 이유는 하위 호환성 떄문입니다.
+
+let obj1 = {
+    name: 'inhui',
+    age: 32,
+};
+
+console.log(Object.keys(obj1))
+console.log(Object.values(obj1));
+console.log(Object.entries(obj1));
+
+
+// Object.keys, values, entries 는 심볼형 프로퍼티를 무시합니다.
+
+// for..in 반복문 처럼 Object.keys, Object.values, Object.entries 는 키가 심볼형인 프로퍼티는 무시합니다.
+// 대개는 심볼형 키를 연산 대상에 포함하지 않는게 좋지만, 심볼형 키가 필요한 경우엔 심볼형 키만 배열형태로 반환해주는 메서드인 Object.getOwnPropertySymbols 를 사용하면 됩니다.
+
+
+// 객체 변환하기
+
+// 객체엔 map, filter 같은 배열 전용 메서드를 사용할 수 없습니다.
+
+// 하지만 Object.entries 와 Object.fromEntries 를 순차적으로 적용하면 객체에도 배열 전용 메서드를 사용할 수 있습니다.
+
+// 1. Object.entries(obj) 를 사용해 객체의 키-값 쌍이 요소인 배열을 얻습니다.
+// 2. 1에서 만든 배열에 map 등의 배열 전용 메서드를 적용합니다.
+// 3. 2에서 반환된 배열에 Object.formEntries(array) 를 적용해 배열을 다시 객체로 되돌립니다.
+
+let obj2 = {
+    banana : 1e2,
+    orange : 5e2,
+    meat : 1e3,
+};
+
+console.log(obj2);
+
+let obj3 = Object.fromEntries(
+    Object.entries(obj2).map(([key, value], i) => [key, value*2])
+);
+
+console.log(obj3);
+
 </script>
