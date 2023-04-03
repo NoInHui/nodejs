@@ -120,4 +120,7 @@ function hwpExport(object) {
   document.body.removeChild(fileDownload);
 }
 
+function customConsole(obj, method='log') {
+  Object.keys(obj).map(key => console[method](`${key} : `, obj[key]));
+}
 
