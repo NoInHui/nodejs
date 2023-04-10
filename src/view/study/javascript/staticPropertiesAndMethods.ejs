@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+// 정적 메서드와 정적 프로퍼티
+
+// prototype 이 아닌 클래스 함수 자체에 메서드를 설정할 수도 있습니다.
+// 이런 메서드를 정적(static) 메서드라고 부릅니다.
+
+// 정적 메서드는 아래와 같이 클래스 안에서 static 키워드를 붙여 만들 수 있습니다.
+
+class Class1 {
+    static func() {
+        console.log(this === Class1);
+    }
+}
+
+Class1.func();
+
+// 정적 메서드는 메서드를 프로퍼티 형태로 직접 할당하는 것과 동일한 일을 합니다.
+
+class Class2 {}
+
+Class2.func = function() {
+    console.log(this === Class2);
+}
+
+Class2.func();
+
+// Class.func() 가 호출될 때 this 의 값은 클래스 생성자인 Class 자체가 됩니다.
+// 정적 메서드는 어떤 특정한 객체가 아닌 클래스에 속한 함수를 구현하고자 할 때 주로 사용됩니다.
+
+// 객체 Class3 가 여러 개 있고 이들을 비교해줄 함수가 필요하다고 가정해 봅시다.
+// 가장 먼저 아래와 같이 Class3.compare 를 추가하는 방법이 떠오를 겁니다.
+
+class Class3 {
+    constructor(title, date) {
+        this.title = title;
+        this.date = date;
+    }
+
+    static compare(obj1, obj2) {
+        return obj1.date - obj2.date;
+    }
+}
+
+let obj1 = [
+    new Class3('HTML', new Date(2019, 1, 1)),
+    new Class3('CSS', new Date(2019, 0, 1)),
+    new Class3('JavaScript', new Date(2019, 11, 1)),
+];
+
+obj1.sort(Class3.compare);
+console.log(obj1);
+
+// 여기서 Class3.compare 는 obj1 을 비교해주는 수단으로, 전체를 '위에서' 바라보며 비교를 수행합니다.
+// Class3.compare 가 객체의 메서드가 아닌 클래스의 메서드여야 하는 이유가 여기에 있습니다.
+
+// 이번에 살펴볼 예시는 '팩토리' 메서드를 구현한 코드입니다.
+// 다양한 방법을 사용해 조건에 맞는 인스턴스를 만들어야 한다고 가정해 봅시다.
+
+// 1. 매개변수(title,date 등)를 이용해 관련 정보가 담긴 인스턴스 생성
+// 2. 오늘 날짜를 기반으로 비어있는 인스턴스 생성
+// 3. 기타 등등
+
+// 첫 번째 방법은 생성자를 사용해 구현할 수 있습니다.
+// 두 번째 방법은 클래스에 정적 메서드를 만들어 구현할 수 있습니다. 아래 Class4.createTodays() 같이 말이죠.
+
+class Class4 {
+    constructor(title, date) {
+        this.title = title;
+        this.date = date;
+    }
+    static createTodays() {
+        return new this('Today', new Date());
+    }
+}
+
+let obj2 = Class4.createTodays();
+
+console.log(obj2);
+
+class Class5 {
+    constructor(title, date) {
+        this.title = title;
+        this.date = date;
+    }
+    createTodays() {
+        return new this('Today', new Date());
+    }
+}
+
+try {
+    let obj3 = Class5.createTodays();
+    // Class5.createTodays() -> 전체 클래스의 메서드가 아니기 때문에 직접 호출 불가
+    console.log(obj3);
+} catch(e) {
+    console.log(e);
+}
+
+// 이제 Today 라는 글이 필요할 때마다 Class4.createTodays() 를 호출하면 됩니다.
+// 여기서도 마찬가지로 Class4.createTodays() 는 인스턴스 메서드가 아닌 전체 클래스의 메서드 입니다.
+
+// 정적 메서드는 아래 예시와 같이 항목 검색, 저장, 삭제 등을 수행해주는 데이터베이스 관련 클래스에도 사용됩니다.
+
+// Article은 article을 관리해주는 특별 클래스라고 가정합시다.
+// article 삭제에 쓰이는 정적 메서드
+// Article.remove({id: 12345});
+
+
+// 정적 프로퍼티
+
+// 정적 프로퍼티도 물론 만들 수 있습니다.
+// 정적 프로퍼티는 일반 클래스 프로퍼티와 유사하게 생겼는데 앞에 static 이 붙는다는 점만 다릅니다.
+
+class Class6 {
+    static publisher = 'inhui';
+}
+
+console.log(Class6.publisher);
+
+// 위 예시는 Class6 에 프로퍼티를 직접 할당한 것과 동일하게 동작합니다.
+
+Class6.publisher = 'john';
+
+
+// 정적 프로퍼티와 메서드 상속
+
+// 정적 프로퍼티와 메서드는 상속됩니다.
+
+class Class7 {
+    static planet = '지구';
+
+    constructor(name, speed) {
+        this.name = name;
+        this.speed = speed;
+    }
+
+    run(speed = 0) {
+        this.speed += speed;
+        console.log(`${this.name}가 속도 ${this.speed}로 달립니다.`);
+    }
+
+    static compare(obj1, obj2) {
+        return obj1.speed - obj2.speed;
+    }
+}
+
+class Class8 extends Class7 {
+    hide() {
+        console.log(`${this.name}가 숨었습니다!`);
+    }
+}
+
+let arr1 = [
+    new Class8('흰 토끼', 10),
+    new Class8('검은 토끼', 5),
+];
+
+arr1.sort(Class8.compare);
+
+console.log(arr1);
+console.log(Class8.planet);
+
+// Class8 extends Class7 은 두 개의 [[Prototype]] 참조를 만들어 냅니다.
+
+// 1. 함수 Class8 은 프로토타입을 통해 함수 Class7 을 상속받습니다.
+// 2. Class8.prototype 은 프로토타입을 통해 Class7.prototype 을 상속받습니다.
+
+// 이런 과정이 있기 때문에 일반 메서드 상속과 정적 메서드 상속이 가능합니다.
+
+// 코드로 확인해 봅시다.
+class Class9 {}
+class Class10 extends Class9 {}
+
+// 정적 메서드
+console.log('Class10.__proto__ === Class9', Class10.__proto__ === Class9);
+
+// 일반 메서드
+console.log('Class10.prototype.__proto__ === Class9.prototype', Class10.prototype.__proto__ === Class9.prototype);
+
+
+// 요약
+
+// 정적 메서드는 특정 클래스 인스턴스가 아닌 클래스 '전체'에 필요한 기능을 만들 때 사용할 수 있습니다.
+// 인스턴스끼리 비교해주는 메서드 Class.compare(obj1,obj2) 이나 팩토리 메서드 Class.createTodays() 를 만들 때 정적 메서드가 쓰입니다.
+// 정적 메서드는 클래스 선언부 안에 위치하고 앞에 static 이라는 키워드가 붙습니다.
+
+// 정적 프로퍼티는 데이터를 클래스 수준에 저장하고 싶을 때 사용합니다.
+// 정적 프로퍼티 역시 개별 인스턴스에 묶이지 않습니다.
+let obj4 = new Class7('inhui',5);
+console.log('obj4.planet', obj4.planet);
+console.log('Class7.planet', Class7.planet);
+
+// static 을 사용한 선언은 기술적으론 클래스 자체에 직접 할당하는 거소가 동일합니다.
+// Class.property = ...
+// Class.method = ...
+
+// 정적 프로퍼티와 정적 메서드는 상속이 가능합니다.
+// class B extends A 는 클래스 B 의 프로토타입이 클래스 A 를 가리키게 합니다. B.[[Prototype]] = A
+// 따라서 B에서 원하는 프로퍼티나 메서드를 찾지 못하면 A 로 검색이 이어집니다.
+
+
+</script>
