@@ -1,5 +1,6 @@
 // cd C:\Users\inhui\Documents\GitHub\nodejs\public\typescript
 // tsc typescript1.ts
+// tsc -w
 
 // 소개
 
