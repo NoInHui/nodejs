@@ -25,5 +25,33 @@ let arr5 = ['1', '2'];
 let arr6 = arr5;
 arr6[0] = '3';
 arr6[1] = '1';
-// readonly VS const
-// 변수는 const 를 사용하고, 프로퍼티는 readonly 를 사용합니다.
+let func6 = function (param1, param2) {
+    return false;
+};
+// 올바른 함수 타입 검사를 위해, 매개변수의 이름이 같을 필요는 없습니다.
+// 함수 매개변수들은 같은 위치에 대응되는 매개변수끼리 한번에 하나씩 검사합니다.
+// interface4 타입의 변수로 직접 함수 값이 할당되었기 때문에 typescript의 문맥상 타이핑이 인수 타입을 추론할 수 있습니다.
+let func7 = function (param1, param2) {
+    // param1 = 123; // error
+    return true;
+};
+class class1 {
+    setTime(d) {
+        this.currentTime = d;
+    }
+    constructor(h, m) {
+        this.currentTime = new Date();
+    }
+}
+let obj5 = {
+    a: 'test',
+    b: 123,
+    c: true,
+};
+function func8() {
+    let counter = (function (start) { });
+    counter.interval = 123;
+    counter.reset = function () { };
+    return counter;
+}
+let obj6 = func8();
