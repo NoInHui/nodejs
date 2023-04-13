@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+
+
+
+</script>
