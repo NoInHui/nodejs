@@ -28,10 +28,50 @@
     <input type="hidden" id="category" value="<%=category%>"/>
     <input type="hidden" id="page" value="<%=page%>"/>
 
-    <div id="ele1" class="sample1 sample2">123</div>
 </body>
 </html>
 
 <script>
+
+// 커스텀 이벤트 디스패치
+
+// 자바스크립트를 사용하면 핸들러를 할당할 수 있을 뿐만 아니라 이벤트를 직접 만들 수도 있습니다.
+
+// 이렇게 직접 만든 커스텀 이벤트(custom event)는 '그래픽 컴포넌트(graphical component)' 를 만들 때 사용됩니다.
+// 자바스크립트 기반 메뉴가 있다고 가정해 봅시다.
+// 개발자는 메뉴의 루트 요소에 open, select 같은 이벤트를 달아 상황에 맞게 이벤트가 실행되게 할 수 있습니다.
+// 이렇게 루트 요소에 이벤트 핸들러를 달아놓으면 바깥 코드에서도 이벤트 리스닝을 통해 메뉴에서 어떤 일이 일어났는지를 파악할 수 있습니다.
+
+// 자바스크립트를 사용하면 새로운 커스텀 이벤트뿐만 아니라 목적에 따라 click, mousedown 같은 내장 이벤트를 직접 만들 수도 있습니다.
+// 이렇게 만든 내장 이벤트들은 테스팅을 자동화할 때 유용합니다.
+
+// Event 생성자
+
+// 내장 이벤트 클래스는 DOM 요소 클래스같이 계층 구조를 형성합니다.
+// 내장 이벤트 클래스 계층의 꼭대기엔 Event 클래스가 있습니다.
+
+// Event 객체는 다음과 같이 생성할 수 있습니다.
+// let event = new Event(type[, options]);
+
+// 인수는 다음과 같습니다.
+// type : 이벤트 타입을 나타내는 문자열로 'click' 같은 내장 이벤트, 'my-event' 같은 커스텀 이벤트가 올 수도 있습니다.
+// optinos : 두 개의 선택 프로퍼티가 있는 객체가 옵니다.
+//  - bubbles : true / false - true 인 경우 이벤트가 버블링 됩니다.
+//  - cancelable : true / false - true 인 경우 브라우저 기본 동작이 실행되지 않습니다.
+
+// 아무런 값도 지정하지 않으면 두 프로퍼티는 기본적으로 {bubbles: false, cancelable: false} 가 됩니다.
+
+
+// dispatchEvent
+
+// 이벤트 객체를 생성한 다음에 ele.dispatchEvent(event) 를 호출해 요소에 있는 이벤트를 반드시 실행시켜 줘야 합니다.
+// 이렇게 이벤트를 실행시켜줘야 핸들러가 일반 브라우저 이벤트처럼 이벤트에 반응할 수 있습니다.
+// bubbles 플래그를 true 로 해서 이벤트를 만든 경우 이벤트는 제대로 버블링 됩니다.
+
+
+
+
+
+
 
 </script>

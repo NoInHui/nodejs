@@ -32,7 +32,7 @@
     <button id="ele2" onclick="alert(this.innerHTML)">ele2</button>
     <button id="ele3" value="ele3value">ele3</button>
     <button id="ele4" value="" onclick="console.log(event)">ele4</button>
-
+    <button id="ele5">ele5</button>
 </body>
 </html>
 
@@ -237,12 +237,86 @@ document.querySelector('#ele3').onclick = function(event) {
 // addEventListener 를 사용하면 함수뿐만 아니라 객체를 이벤트 핸들러로 할당할 수 있습니다.
 // 이벤트가 발생하면 객체에 구현한 handleEvent 메서드가 호출됩니다.
 
+let obj1 = {
+    handleEvent(event) {
+        console.log(event);
+        alert(event);
+    }
+}
+
+document.querySelector('#ele5').addEventListener('click', obj1);
+
+// 보시다시피 addEventListener 가 인수로 객체 형태의 핸들러를 받으면 이벤트 발생 시 obj.handleEvent(event) 가 호출됩니다.
+
+// 클래스를 사용할 수도 있습니다.
+
+document.querySelector('#ele5').removeEventListener('click', obj1);
+
+class Class1 {
+    handleEvent(event) {
+        switch(event.type) {
+            case 'mousedown' :
+                console.log('mousedown !!');
+                break;
+            case 'mouseup' : 
+                console.log('mouseup !!');
+                break;
+        }
+    }
+}
+
+let class1 = new Class1();
+document.querySelector('#ele5').addEventListener('mousedown', class1);
+document.querySelector('#ele5').addEventListener('mouseup', class1);
+
+// 위 예시에선 하나의 객체에서 두 개의 이벤트를 처리하고 있습니다.
+// 이때 주의할 점은 addEventListener 를 사용할 때는 요소에 타입을 정확히 명시해 주어야 한다는 점입니다.
+// 위 예시에서 class 객체는 오직 mousedown 와 mouseup 이벤트에만 응답하고, 다른 타입의 이벤트에는 응답하지 않습니다.ㅣ
+
+// handleEvent 메서드가 모든 이벤트를 처리할 필요는 없습니다.
+// 이벤트 관련 메서드를 handleEvent 에서 호출해서 사용할 수도 있습니다.
+
+class Class2 {
+    handleEvent(event) {
+        let method = 'on' + event.type[0].toUpperCase() + event.type.slice(1);
+        this[method](event);
+    }
+
+    onMousedown() {
+        console.log("마우스 버튼을 눌렀습니다.");
+    }
+
+    onMouseup() {
+        console.log("그리고 버튼을 뗐습니다.");
+    }
+}
+
+// 이벤트 핸들러가 명확히 분리되었기 때문에 코드 변경이 원할해졌습니다.
 
 
 
+// 요약
 
+// 이벤트 핸들러는 3가지 방법으로 할당할 수 있습니다.
 
+// 1. HTML 속성 : onclick="..."
+// 2. DOM 프로퍼티 : ele.onclick = function()
+// 3. 메서드 : ele.addEventListener(event, handler [, phase]) 로 핸들러를 추가하고 removeEventListener 로 핸들러를 제거함
 
+// HTML 속성을 이용한 핸들러 할당은 자주 쓰이지 않습니다.
+// HTML 태그 중간에 자바스크립3트가 들어가 있으면 어색하기 때문입니다.
+// 긴 코드를 끼워 넣는 게 불가능한 점도 이유 중 하나입니다.
+
+// DOM 프로 퍼티를 사용한 방법은 괜찮습니다.
+// 하지만 복수의 핸들러 할당이 불가능하다는 단점이 있습니다.
+// 여러 상황에서 이런 제약이 큰 단점이 되진 않지만요.
+
+// 메서드를 사용하는 방법은 가장 유연하지만 코드는 가장 깁니다.
+// transitionend 와 DOMContentLoaded 같은 일부 이벤트는 이 방법으로만 처리할 수 있습니다.
+// addEventListener 는 객체 형태의 이벤트를 지원합니다. 이 경우엔 이벤트 발생 시 객체 안에 구현된 메서드인 handleEvent 가 호출됩니다.
+
+// 어떤 방법으로 이벤트 핸들러를 할당하던, 첫 번째 인자는 이벤트 객체입니다.
+// 이벤트 객체는 어떤 일이 일어났는지에 대한 상세한 정보를 담고 있습니다.
 
 
 </script>
