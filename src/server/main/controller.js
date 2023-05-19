@@ -10,6 +10,27 @@ exports.careerCalculator = async function(req, res) {
     res.render('careerCalculator/careerCalculator', {pageName});
 }
 
+exports.loginHistoryCheck = async function(req, res) {
+    let fileInfo = fs.readFileSync(`public/save/교강사 로그인 기록 데이터.json`, 'utf8');
+    // console.log(fileInfo);
+    let jsonData = JSON.parse(fileInfo);
+    let memberList = jsonData.reduce((acc,cur,i) => {
+        if(!acc.find(v => v.id.toLowerCase() == cur.id.toLowerCase())) {
+            acc.push({
+                id: cur.id.toLowerCase(),
+                name: cur.name,
+            });
+        }
+        return acc;
+    }, []);
+    // console.log(jsonData);
+    memberList.map(v => {
+        v.access_list = jsonData.filter(l => l.id.toLowerCase() == v.id).map(d => d.access_at);
+    });
+    console.log(memberList);
+
+}
+
 exports.editor = async function(req, res) {
     const {pageName} = req.query;
     res.render('editor/editor', {pageName});
