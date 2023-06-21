@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+
+let obj1 = {
+    name: 'inhui'
+};
+
+console.log(Object.getOwnPropertyDescriptor(obj1,'name'));
+
+Object.defineProperty(obj1,'name',{
+    value: 'john'
+});
+
+console.log(Object.getOwnPropertyDescriptor(obj1,'name'));
+
+let obj2 = {};
+
+Object.defineProperty(obj2,'name',{
+    value: 'tom'
+});
+
+console.log(Object.getOwnPropertyDescriptor(obj2,'name'));
+
+let obj3 = {};
+
+Object.defineProperty(obj3, 'name', {
+    value: 'inhui',
+    enumerable: true,
+    writable: false,
+    configurable: true,
+});
+
+obj3.name = '123'; // 엄격모드일때는 오류가 발생, 실제로 바뀌진 않음
+console.log(Object.getOwnPropertyDescriptor(obj3,'name'));
+
+let obj4 = {
+    name: 'john',
+    toString() {
+        return this.name;
+    },
+    array: [1,2,3,4],
+};
+
+console.log(Object.keys(obj4));
+for(let key in obj4) console.log(key);
+
+Object.defineProperty(obj4, 'toString', {
+    enumerable: false
+});
+
+for(let key in obj4) console.log(key);
+
+console.log(Object.keys(obj4));
+
+Object.defineProperty(obj4, 'array', {
+    enumerable: false,
+});
+
+console.log(obj4.array.map(v => console.log(v)));
+
+console.log(Math.PI);
+
+console.log(Object.getOwnPropertyDescriptor(Math, 'PI'));
+
+
+let obj5 = {};
+
+Object.defineProperty(obj5, 'name', {
+    value: 'inhui',
+    writable: false,
+    configurable: false,
+});
+
+try {
+    Object.defineProperty(obj5, 'name', {
+        writable: true,
+    });
+} catch(e) {
+    console.log(e);
+}
+
+// non-configurable 은 non-writable 과 다릅니다.
+// configurable 플래그가 false 이러다롣 writable 플래그가 true 이면 프로퍼티 값을 변경할 수 있습니다.
+// configurable:false 는 플래그 값 변경이나 프로퍼티 삭제를 막기 위해 만들어졌지, 프로퍼티 값 변경을 막기 위해 만들어진 게 아닙니다.
+
+let obj6 = {};
+Object.defineProperties(obj6, {
+    name: {value:'inhui', writable:false},
+    surname: {value:'noh', writable:true, configurable:false}
+});
+
+obj6.surname = 'kim';
+
+console.log(Object.getOwnPropertyDescriptors(obj6));
+
+let copy1 = Object.defineProperties({}, Object.getOwnPropertyDescriptors(obj6));
+
+</script>
