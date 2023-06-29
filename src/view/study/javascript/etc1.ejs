@@ -32,98 +32,89 @@
 
 <script>
 
-let obj1 = {
-    name: 'inhui'
-};
+// 프라미스 API
 
-console.log(Object.getOwnPropertyDescriptor(obj1,'name'));
+// Promise 클래스에는 5가지 정적 메서드가 있습니다.
 
-Object.defineProperty(obj1,'name',{
-    value: 'john'
-});
+// Promise.all
+// Promise.all 은 요소 전체가 프라미스인 배열(엄밀히 따지면 이터러블 객체이지만, 대개는 배열임)을 받고 새로운 프라미스를 반환합니다.
+// 배열 안 프라미스가 모두 처리되면 새로운 프라미스가 이행되는데, 배열 안 프라미스의 결괏값을 담은 배열이 새로운 프라미스의 result 가 됩니다.
 
-console.log(Object.getOwnPropertyDescriptor(obj1,'name'));
+Promise.all([
+    new Promise(resolve => setTimeout(() => resolve(1), 1000)),
+    new Promise(resolve => setTimeout(() => resolve(2), 2000)),
+    new Promise(resolve => setTimeout(() => resolve(3), 3000)),
+    new Promise(resolve => setTimeout(() => resolve(4), 1000)),
+]).then(result => console.log(result));
 
-let obj2 = {};
+// result 요소 순서는 Promise.all 에 전달되는 프라미스 순서와 상응합니다.
 
-Object.defineProperty(obj2,'name',{
-    value: 'tom'
-});
+let urls = [
+    'test/fetchTest',
+    'test/fetchTest2',
+    'test/fetchTest3',
+    'test/fetchTest4',
+];
 
-console.log(Object.getOwnPropertyDescriptor(obj2,'name'));
+let requests = urls.map(url => fetch(url));
 
-let obj3 = {};
+Promise.all(requests)
+.then(responses => Promise.all(responses.map(res => res.json())))
+.then(dataList => console.log(dataList))
+.catch(e => console.log(e));
 
-Object.defineProperty(obj3, 'name', {
-    value: 'inhui',
-    enumerable: true,
-    writable: false,
-    configurable: true,
-});
+// Promise.all 에 전달되는 프라미스 중 하나라도 거부되면, Promise.all 이 반환하는 프라미스는 에러와 함께 바로 거부됩니다.
 
-obj3.name = '123'; // 엄격모드일때는 오류가 발생, 실제로 바뀌진 않음
-console.log(Object.getOwnPropertyDescriptor(obj3,'name'));
+Promise.all([
+    new Promise((resolve, reject) => setTimeout(() => resolve(5), 1000)),
+    new Promise((resolve, reject) => setTimeout(() => reject(new Error('error')), 3000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve(6), 2000)),
+]).then(result => console.log(result))
+.catch(e => console.log(e));
 
-let obj4 = {
-    name: 'john',
-    toString() {
-        return this.name;
-    },
-    array: [1,2,3,4],
-};
+// Promise.allSettled
 
-console.log(Object.keys(obj4));
-for(let key in obj4) console.log(key);
+// Promise.all 은 프라미스가 하나라도 거절되면 전체를 거절합니다.
+// Promise.allSettled 는 프라미스가 처리될 때까지 기다립니다. 반환되는 배열은 다음과 같은 요소를 갖습니다.
+// 응답이 성공할 경우 - {status: 'fulfilled', value: result}
+// 에러가 발생한 경우 - {status: 'rejected', reason:error}
 
-Object.defineProperty(obj4, 'toString', {
-    enumerable: false
-});
+let urls2 = [
+    'test/fetchTest',
+    'https://no-such-url',
+    'test/fetchTest3',
+];
 
-for(let key in obj4) console.log(key);
+Promise.allSettled(urls2.map(url => fetch(url)))
+.then(responses => {
+    responses.map(res => {
+        if(res.status == 'rejected') {
+            console.log(res.reason);
+        }
+    })
+    return responses;
+}).then(responses => Promise.allSettled(responses.filter(res => res.status == 'fulfilled').map(res => res.value).map(res => res.json())))
+.then(dataList => console.log(dataList))
+.catch(e => console.log(e));
 
-console.log(Object.keys(obj4));
+// Promise.allSettled 를 사용하면 이처럼 각 프라미스의 상태와 값 또는 에러를 받을 수 있습니다.
 
-Object.defineProperty(obj4, 'array', {
-    enumerable: false,
-});
+// Promise.race
 
-console.log(obj4.array.map(v => console.log(v)));
+// Promise.race 는 Promise.all 과 비슷합니다.
+// 다만 가강 먼저 처리되는 프라미스의 결과를 반환합니다.
 
-console.log(Math.PI);
+Promise.race([
+    new Promise((resolve, reject) => setTimeout(() => resolve('race1'), 10000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve('race2'), 5000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve('race3'), 1000)),
+]).then(result => console.log(result));
 
-console.log(Object.getOwnPropertyDescriptor(Math, 'PI'));
+// Promise.resolve , Promise,reject
+
+// Promise.resolve , Promise,reject 는 async / await 문법이 생긴 후 쓸모 없어졌기 때문에 근래에는 거의 사용하지 않습니다.
 
 
-let obj5 = {};
 
-Object.defineProperty(obj5, 'name', {
-    value: 'inhui',
-    writable: false,
-    configurable: false,
-});
-
-try {
-    Object.defineProperty(obj5, 'name', {
-        writable: true,
-    });
-} catch(e) {
-    console.log(e);
-}
-
-// non-configurable 은 non-writable 과 다릅니다.
-// configurable 플래그가 false 이러다롣 writable 플래그가 true 이면 프로퍼티 값을 변경할 수 있습니다.
-// configurable:false 는 플래그 값 변경이나 프로퍼티 삭제를 막기 위해 만들어졌지, 프로퍼티 값 변경을 막기 위해 만들어진 게 아닙니다.
-
-let obj6 = {};
-Object.defineProperties(obj6, {
-    name: {value:'inhui', writable:false},
-    surname: {value:'noh', writable:true, configurable:false}
-});
-
-obj6.surname = 'kim';
-
-console.log(Object.getOwnPropertyDescriptors(obj6));
-
-let copy1 = Object.defineProperties({}, Object.getOwnPropertyDescriptors(obj6));
 
 </script>

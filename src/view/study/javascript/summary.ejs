@@ -284,6 +284,386 @@ let obj14 = Object.create(Object.getPrototypeOf(obj13), Object.getOwnPropertyDes
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+// 콜백(callback)
+
+// 자바스크립트 호스트 환경에 제공하는 여러 함수를 사용하면 비동기(asynchronous) 동작을 스케줄링 할 수 있습니다.
+// 콜백은 비동기 프로그래밍의 일반적인 접근법입니다.
+
+function loadScript1(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    script.onload = () => callback(script);
+    document.head.append(script);
+}
+
+loadScript1('/test/testScript1.js', script => {
+    console.log(`${script.src} load`);
+    testScript1();
+});
+
+// 이런 방식을 '콜백 기반(callback-based)' 비동기 프로그래밍이라고 합니다.
+// 무언가를 비동기적으로 수행하는 함수는 함수 내 동작이 모두 처리된 후 실행되어야 하는 함수가 들어갈 콜백을 인수로 반드시 제공해야 합니다.
+
+// 콜백 에러 핸들링
+
+// 콜백 함수는 에러 핸들링할 수 있어야 합니다.
+// 오류 우선 콜백(error-first callback) 패턴은 다음 관례를 따릅니다.
+
+// 1. callback 의 첫 번째 인수는 에러를 위해 남겨둡니다. 에러가 발생하면 이 인수를 이용해 callback(err) 가 호출됩니다.
+// 2. 두 번째 인수(필요하면 인수를 더 추가할 수 있음)는 에러가 발생하지 않았을 때를 위해 남겨둡니다. 원하는 동작이 성공한 경우엔 callback(null, result1, result2...) 가 호출됩니다.
+
+function loadScript2(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    script.onload = () => callback(null, script);
+    script.onerror = (e) => callback(new Error('script load error'));
+    document.head.append(script);
+}
+
+loadScript2('/test/testScript3.js', (error, script) => {
+    if(error) {
+        console.log(`error : ${error}`);
+    } else {
+        console.log(`${script.src} load`);
+        testScript2();
+    }
+});
+
+// 오류 우선 콜백 스타일을 사용하면, 단일 콜백 함수에서 에러 케이스와 성공 케이스 모두를 처리할 수 있습니다.
+
+// 멸망의 피라미드
+
+// 콜백 기반 비동기 처리는 언뜻 봤을 때 꽤 쓸만해 보이고, 실제로도 그렇습니다.
+// 한 개 혹은 두 개의 중첩 호출이 있는 경우는 보기에도 나쁘지 않습니다.
+// 하지만 꼬리에 꼬리를 무는 비동기 동작이 많아지면 아래와 같은 코드 작성이 불가피해 집니다.
+
+loadScript2('/test/1.js', (error, script) => {
+    if(error) {
+        console.log(`error1 : ${error}`);
+    } else {
+        loadScript2('/test/2.js', (error, script) => {
+            if(error) {
+                console.log(`error2 : ${error}`);
+            } else {
+                loadScript2('test/3.js', (error, script) => {
+                    // ...
+                })
+            }
+        })
+    }
+})
+
+// 이렇게 깊은 중첩 코드가 만들어지는 패턴은 소위 '콜백 지옥(callback hell)' 혹은 '멸망의 피라미드(pyramid of doom)' 라고 불립니다.
+// 이런 코딩 방식은 좋지 않습니다.
+
+// 멸망의 피라미드를 피할 방법이 몆가지 있습니다.
+// 각 동작을 독립적인 함수로 만들어 위와 같은 문제를 해결하는 방법도 있지만 코드가 찢어진 종잇조각 같아 보인다는 문제가 생깁니다.
+// 가장 좋은 방법 중 하나는 '프라미스(promise)' 를 사용하는 것입니다.
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 프라미스(promise)
+
+// promise 객체는 아래와 같은 문법으로 만들 수 있습니다.
+
+let promise1 = new Promise(function(resolve, reject) {
+    // execurotr
+});
+
+// new Promise 에 전달되는 함수는 executor(실행자, 실행함수) 라고 부릅니다.
+// executor 는 new Promise 가 만들어질 때 자동으로 실행되는데, 결과를 최종적으로 만들어내는 제작 코드를 포함합니다.
+// executor 의 인수 resolve 와 reject 는 자바스크립트에서 자체 제공하는 콜백입니다.
+// executor 에선 결과를 즉시 얻든 늦게 얻든 상관없이 상황에 따라 인수로 넘겨준 콜백 중 하나를 반드시 호출해야 합니다.
+
+// resolve(value) - 성공적으로 끝난 경우 그 결과를 나타내는 value와 함께 호출
+// reject(error) - 에러 발생 시 에러 객체를 나타내는 error 와 함께 호출
+
+// new Promise 생성자가 반환하는 promise 객체는 다음과 같은 내부 프로퍼티를 갖습니다.
+
+// state - 처음엔 pending(보류) 이었다 resolve 가 호출되는 'fulfilled', reject 가 호출되면 'rejected' 로 변합니다.
+// result - 처음엔 undefined 이었다 resolve(value) 가 호출되면 value 로, reject(error) 가 호출되면 error 로 변합니다.
+
+let promise2 = new Promise(function(resolve, reject) {
+    setTimeout(() => resolve('promise2'), 1000);
+}).then(
+    result => console.log('promise success : ' + result),
+    error => console.log('promise error : ' + error),
+);
+
+let promise3 = new Promise(function(resolve, reject) {
+    setTimeout(() => reject(new Error('promise3')), 2000);
+}).then(
+    result => console.log('promise success : ' + result),
+    error => console.log('promise error : ' + error),
+);
+
+// executor 는 보통 시간이 걸리는 일을 수행합니다.
+// 일이 끝나면 resolve 나 reject 함수를 호출하는데, 이때 프라미스 객체의 상태가 변화합니다.
+// 프라미스는 성공 또는 실패만 합니다. executor는 resolve 나 reject 중 하나를 반드시 호출해야 합니다.
+
+// promise : then
+
+// .then 의 첫 번째 인수는 프라미스가 이행되었을 때 실행되는 함수이고, 여기서 실행 결과를 받습니다.
+// .then 의 두 번째 인수는 프라미스가 거부되었을 때 실행되는 함수이고, 여기서 에러를 받습니다.
+
+// promise : catch
+
+// 에러가 발생한 경우만 다루고 싶다면 .then(null, errorHandle) 같이 null 을 첫 번째 인수로 전달하면 됩니다.
+// .catch(errorHandle) 를 써도 되는데 .catch 는 .then 에 null 을 전달하는 것과 동일하게 작동합니다.
+
+let promise4 = new Promise(function(resolve, reject) {
+    setTimeout(() => reject(new Error('promise4')), 3000);
+}).then(
+    result => console.log('promise success : ' + result),
+).catch(
+    error => console.log('promise error : ' + error)
+);
+
+// .catch(f) 는 .then(null, f) 와 완벽하게 같습니다.
+
+// promise : finally
+
+// 결과가 어떻든 마무리가 필요하면 finally 가 유용합니다.
+// finally 핸들러엔 인수가 없습니다.
+// finally 에선 프라미스가 이행되었는지, 거부되었는지 알 수 없습니다.
+// finally 에선 절차를 마무리하는 '보편적' 동작을 수행하기 때문에 성공,실패 여부를 몰라도 됩니다.
+
+let promise5 = new Promise(function(resolve, reject) {
+    setTimeout(() => resolve('promise5'), 4000);
+}).then(
+    result => console.log('promise success : ' + result)
+).catch(
+    error => console.log('promise error : ' + error)
+).finally(
+    () => console.log('promise5 finally')
+);
+
+// 처리된 프라미스의 핸들러는 즉각 실행됩니다.
+// 프라미스가 대기 상태일 때 .then/catch/finally 핸들러는 프라미스가 처리되길 기다립니다.
+// 반면 프라미스가 이미 처리상태라면 핸들러가 즉각 실행됩니다.
+
+let promise6 = new Promise(function(resolve, reject) {
+    setTimeout(() => resolve('promise6'), 5000);
+});
+
+setTimeout(() => {
+    promise6.then(
+        result => console.log('promise success : ' + result)
+    ).catch(
+        error => console.log('promise error : ' + error)
+    ).finally(
+        () => console.log('promise6 finally')
+    )
+}, 7000);
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 프라미스 체이닝
+
+// 콜백 챕터의 멸망의 피라미드와 같이 문제를 프라미스를 사용하면 여러 가지 해결책을 만들 수 있습니다.
+// 프라미스 체이닝은 아래와 같이 생겼습니다.
+
+new Promise(function(resolve, reject) {
+    setTimeout(() => resolve(1), 8000);
+}).then(function(result) {
+    console.log('promise chain1-1', result);
+    return result*2
+}).then(function(result) {
+    console.log('promise chain1-2', result);
+    return result*2
+}).then(function(result) {
+    console.log('promise chain1-3', result);
+    return result*2
+});
+
+// 프라미스 체이닝이 가능한 이유는 promise.then 을 호출하면 프라미스가 반환되기 때문입니다.
+// 반환된 프라미스엔 당연히 .then 을 호출할 수 있습니다.
+
+// 프라미스 반환하기
+// .then(handler) 에 사용된 핸들러가 프라미스를 생성하거나 반환하는 경우도 있습니다.
+// 이 경우 이어지는 핸들러는 프라미스가 처리될 때까지 기다리다가 처리가 완료되면 그 결과를 받습니다.
+
+new Promise((resolve, reject) => {
+    setTimeout(() => resolve(1), 9000);
+}).then(result => {
+    console.log('promise chain2-1', result);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(result*2), 1000);
+    });
+}).then(result => {
+    console.log('promise chain2-2', result);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(result*2), 1000);
+    });
+}).then(result => console.log('promise chain2-3', result));
+
+// 이렇게 핸들러 안에서 프라미스를 반환하는 것도 비동기 작업 체이닝을 가능하게 해줍니다.
+
+// fetch 와 체이닝 함께 응용하기
+// 프론트 단에선, 네트워크 요청 시 프라미스를 자주 사용합니다.
+
+fetch('/save/jsonData.json')
+.then(res => res.json())
+.then(userlist => console.log(userlist));
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 프라미스와 에러 핸들링
+
+// 프라미스가 거부되면 제어 흐름이 제일 가까운 rejection 핸들러로 넘어가기 때문에 프라미스 체인을 사용하면 에러를 쉽게 처리할 수 있습니다.
+// .catch 는 첫번째 핸들러일 필요가 없고 하나 혹은 여러 개의 .then 뒤에 올 수 있습니다.
+
+fetch('/save/jsonData.json')
+.then(res => res.json())
+.then(userlist => userlist[0])
+.then(user => {
+    console.log('user', user)
+    throw new Error('promise error handle1 : error');
+    // reject(new Error('promise error handle1 : error'));
+})
+.catch(e => console.log(e));
+
+// 암시적 try..catch
+
+// 프라미스 executor 와 프라미스 핸들러 코드 주위엔 '보이지 않는(암시적) try..catch' 가 있습니다.
+// 예외가 발생하면 암시적 try..catch 에서 스스로 예외를 잡고, 에러를 거부상태의 프라미스로 변경시킵니다.
+// .then 핸들러 안에서 throw 를 사용해 에러를 던지면, 이 자체가 거부된 프라미스를 의미하게 됩니다. 따라서 제어 흐름이 가장 가까운 에러 핸들러로 넘어갑니다.
+
+new Promise((resolve, reject) => {
+    resolve('')
+}).then(result => {
+    throw new Error('promise error handle2 : error');
+}).catch(e => console.log(e));
+
+// 다시 던지기
+
+// .catch 안에서 throw 를 사용하면 제어 흐름이 가장 가까운 곳에 있는 에러 핸들러로 넘어갑니다.
+// 여기서 에러가 성공적으로 처리되면 가장 가까운 곳에 있는 .then 핸들러로 제어 흐름이 넘어가 실행이 이어집니다.
+
+// 아래 예시의 .catch 는 에러를 성공적으로 처리합니다.
+
+new Promise((resolve, reject) => {
+    throw new Error('error1');
+}).catch(e => {
+    console.log('에러 처리 완료1', e);
+}).then(() => console.log('에러 처리 후 핸들러 실행1'));
+
+// .catch 블록이 정상적으로 종료되었기 때문에 다음 성공 핸들러 .then 이 호출된 것을 확인할 수 있습니다.
+
+new Promise((resolve, reject) => {
+    throw new Erorr('error2')
+}).catch(e => {
+    console.log('에러 처리 시도', e);
+    if(e instanceof URIError) {
+        // 에러 처리
+    } else {
+        throw e; // 에러 다시 던짐
+    }
+}).then(
+    () => console.log('실행되지 않음')
+).catch(e => {
+    console.log('에러 처리 불가', e);
+});
+
+// 실행 흐름이 첫 번째 .catch 로 넘어갔다가 다음 .catch 로 이어지는 것을 확인할 수 있습니다.
+
+// 처리되지 못한 거부
+
+new Promise((resolve, reject) => {
+    blabla();
+}).then(result => {
+
+});
+
+// 에러가 발생하면 프라미스는 거부상태가 되고, 실행 흐름이 가장 가까운 rejection 핸들러로 넘어갑니다.
+// 그런데 위 예시엔 예외를 처리해 줄 핸들러가 없어서 에러가 갇혀버립니다.
+// 자바스크립트 엔진은 프라미스 거부를 추적하다가 위와 같은 상황이 발생하면 전역 에러를 생성합니다.
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 프라미스 API
+
+// Promise 클래스에는 5가지 정적 메서드가 있습니다.
+
+// Promise.all
+// Promise.all 은 요소 전체가 프라미스인 배열(엄밀히 따지면 이터러블 객체이지만, 대개는 배열임)을 받고 새로운 프라미스를 반환합니다.
+// 배열 안 프라미스가 모두 처리되면 새로운 프라미스가 이행되는데, 배열 안 프라미스의 결괏값을 담은 배열이 새로운 프라미스의 result 가 됩니다.
+
+Promise.all([
+    new Promise(resolve => setTimeout(() => resolve(1), 1000)),
+    new Promise(resolve => setTimeout(() => resolve(2), 2000)),
+    new Promise(resolve => setTimeout(() => resolve(3), 3000)),
+    new Promise(resolve => setTimeout(() => resolve(4), 1000)),
+]).then(result => console.log(result));
+
+// result 요소 순서는 Promise.all 에 전달되는 프라미스 순서와 상응합니다.
+
+let urls = [
+    'test/fetchTest',
+    'test/fetchTest2',
+    'test/fetchTest3',
+    'test/fetchTest4',
+];
+
+let requests = urls.map(url => fetch(url));
+
+Promise.all(requests)
+.then(responses => Promise.all(responses.map(res => res.json())))
+.then(dataList => console.log(dataList))
+.catch(e => console.log(e));
+
+// Promise.all 에 전달되는 프라미스 중 하나라도 거부되면, Promise.all 이 반환하는 프라미스는 에러와 함께 바로 거부됩니다.
+
+Promise.all([
+    new Promise((resolve, reject) => setTimeout(() => resolve(5), 1000)),
+    new Promise((resolve, reject) => setTimeout(() => reject(new Error('error')), 3000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve(6), 2000)),
+]).then(result => console.log(result))
+.catch(e => console.log(e));
+
+// Promise.allSettled
+
+// Promise.all 은 프라미스가 하나라도 거절되면 전체를 거절합니다.
+// Promise.allSettled 는 프라미스가 처리될 때까지 기다립니다. 반환되는 배열은 다음과 같은 요소를 갖습니다.
+// 응답이 성공할 경우 - {status: 'fulfilled', value: result}
+// 에러가 발생한 경우 - {status: 'rejected', reason:error}
+
+let urls2 = [
+    'test/fetchTest',
+    'https://no-such-url',
+    'test/fetchTest3',
+];
+
+Promise.allSettled(urls2.map(url => fetch(url)))
+.then(responses => {
+    responses.map(res => {
+        if(res.status == 'rejected') {
+            console.log(res.reason);
+        }
+    })
+    return responses;
+}).then(responses => Promise.allSettled(responses.filter(res => res.status == 'fulfilled').map(res => res.value).map(res => res.json())))
+.then(dataList => console.log(dataList))
+.catch(e => console.log(e));
+
+// Promise.allSettled 를 사용하면 이처럼 각 프라미스의 상태와 값 또는 에러를 받을 수 있습니다.
+
+// Promise.race
+
+// Promise.race 는 Promise.all 과 비슷합니다.
+// 다만 가강 먼저 처리되는 프라미스의 결과를 반환합니다.
+
+Promise.race([
+    new Promise((resolve, reject) => setTimeout(() => resolve('race1'), 10000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve('race2'), 5000)),
+    new Promise((resolve, reject) => setTimeout(() => resolve('race3'), 1000)),
+]).then(result => console.log(result));
+
+// Promise.resolve , Promise,reject
+
+// Promise.resolve , Promise,reject 는 async / await 문법이 생긴 후 쓸모 없어졌기 때문에 근래에는 거의 사용하지 않습니다.
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
