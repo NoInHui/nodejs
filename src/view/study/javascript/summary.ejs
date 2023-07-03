@@ -665,7 +665,258 @@ Promise.race([
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+// 프라미스화
 
+// 콜백을 받는 함수를 프라미스를 반환하는 함수로 바꾸는 것을 '프라미스화(promisification)' 라고 합니다.
+// 기능을 구현 하다 보면 콜백보다는 프라미스가 더 편리하기 때문에 콜백 기반 함수와 라이브러리를 프라미스를 반환하는 함수로 바꾸는 게 좋은 경우가 종종 생길 겁니다.
+
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    script.onload = () => callback(null, script);
+    script.onerror = () => callback(new Error('error'));
+    document.head.append(script);
+}
+
+// 사용법
+// loadScript('/test/testScript1.js', (err, script) => {...});
+
+// loadScript(src, callback) 을 이제 프라미스화 해봅시다.
+// 새로운 함수 loadScriptPromise(src) 는 loadScript 와 동일하게 동작하지만 callback 을 제외한 src 만 인수로 받아야 하고, 프라미스를 반환해야 합니다.
+
+let loadScriptPromise1 = function(src) {
+    return new Promise((resolve, reject) => {
+        loadScript(src, (err, script) => {
+            if(err) reject(err);
+            else resolve(script);
+        })
+    });
+};
+
+// 사용법
+// loadScriptPromise1('/test/testScript1.js').then(...);
+
+// 예시에서 볼 수 있듯이, loadScriptPromise 는 기존 함수 loadScript 에 모든 일을 위임합니다.
+// loadScript 의 콜백은 스크립트 로딩 상태에 따라 이행 혹은 거부 상태의 프라미스를 반환합니다.
+
+// 그런데 실무에선 함수 하나가 아닌 여러 개의 함수를 프라미스화 해야 할 겁니다.
+// 헬퍼 함수를 만드는게 좋습니다.
+// 프라미스화를 적용할 함수 f 를 받고 래퍼 함수를 반환하는 함수 promisfy(f) 를 만들어봅시다.
+
+function promisfy1(f) {
+    return function(...args) { // 래퍼 함수를 반환
+        return new Promise((resolve, reject) => {
+            function callback(err, result) { // f 에 사용할 커스텀 콜백
+                if(err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            }
+            args.push(callback); // 위에서 만든 커스텀 콜백을 함수 f의 인수 끝에 추가
+            f.call(this, ...args); // 기존 함수를 호출
+        })
+    }
+}
+
+let loadScriptPromise2 = promisfy1(loadScript);
+// loadScriptPromise2('/test/testScript1.js').then(result => testScript1()).catch(e => console.log(e));
+
+// 위 예시는 프라미스화 할 함수가 인수가 두개(err,result) 인 콜백을 받을 것이라 가정하고 작성되었습니다.
+// 그런데 함수 f 가 두 개를 초과하는 인수를 가진 콜백, callback(err, result1, result2, ...) 을 받는다면 어떤 일이 발생할까요?
+// 이런 경우를 대비하여 좀 더 진화한 함수, promisfy 를 만들어 봅시다.
+
+function loadScript2(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    script.onload = () => callback(null, [script], 'success');
+    script.onerror = () => callback(new Error('error'));
+    document.head.append(script);
+}
+
+function promisfy2(f) {
+    return function(...args) {
+        return new Promise((resolve, reject) => {
+            function callback(err, ...results) {
+                if(err) reject(err);
+                else resolve([...results]);
+            }
+            args.push(callback);
+            f.call(this, ...args);
+        })
+    }
+}
+
+let loadScriptPromise3 = promisfy2(loadScript2);
+loadScriptPromise3('/test/testScript1.js').then(result => console.log('loadScriptPromise3', result)).catch(e => console.log(e));
+let loadScriptPromise4 = promisfy2(loadScript);
+loadScriptPromise4('/test/testScript1.js').then(result => console.log('loadScriptPromise4', result)).catch(e => console.log(e));
+
+// 본 챕터에서 설명한 헬퍼 함수보다 더 유용한 형태의 프라미스화를 도와주는 함수를 제공하는 모듈도 많습니다.
+// es6-promisfy 가 대표적인 예입니다. (https://github.com/mikehall314/es6-promisify)
+// Node.js 에선 내장 함수 util.promisfy 를 사용해 프라미스화를 할 수 있습니다.
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 마이크로태스크
+
+// 프라미스 핸들로 .then / catch / finally 는 항상 비동기적으로 실행됩니다.
+// 프라미스가 즉시 이행되더라도 .then / catch/ finally 아래에 있는 코드는 이 핸들러들이 실행되기 전에 실행됩니다.
+
+// 마이크로태스크 큐
+
+// 비동기 작업을 처리하려면 적절한 관리가 필요합니다.
+// 이를 위해 ECMA 에선 PromiseJobs 라는 내부 큐를 명시합니다.
+// V8 엔진에선 이를 '마이크로태스크 큐(microtask queue)' 라고 부르기 때문에 이 용어가 좀 더 선호됩니다.
+
+// 명세서의 설명을 살펴봅시다.
+// - 마이크로태스크 큐는 먼저 들어온 작업을 먼저 실행합니다. (FIFO)
+// - 실행할 것이 아무것도 남아있지 않을 때만 마이크로태스크 큐에 있는 작업이 실행되기 시작합니다.
+
+// 요약하자면, 어떤 프라미스가 준비되었을 때 이 프라미스의 .then / catch / finally 핸들러가 큐에 들어간다고 생각하시면 됩니다.
+// 이때 핸들러들은 여전히 실행되지 않습니다.
+// 현재 코드에서 자유로운 상태가 되었을 때에서야 자바스크립트 엔진은 큐에서 작업을 꺼내 실행합니다.
+
+let promise = Promise.resolve();
+promise.then(() => console.log('promise success'));
+
+for(let i=0; i<=1000000; i++) {
+    if(i == 1000000) console.log(i);
+}
+
+// 실행결과
+// 1000000
+// promise success
+
+// 프라미스 핸들러는 항상 내부 큐를  통과하게 됩니다.
+// 여러 개의 .then / catch / finally 를 사용해 만든 체인의 경우, 각 핸들러는 비동기적으로 실행됩니다.
+// 큐에 들어간 핸들러 각각은 현재 코드가 완료되고, 큐에 적제된 이전 핸들러의 실행이 완료되었을 때 실행됩니다.
+
+// 처리되지 못한 거부
+
+// 이제 자바스크립트 엔진이 어떻게 처리되지 못한 거부(unhandledrejection)를 찾는지 정확히 알 수 있습니다.
+// '처리되지 못한 거부' 는 마이크로태스크 큐 끝에서 프라미스 에러가 처리되지 못할 때 발생합니다.
+// 정상적인 경우라는 에러가 발생할것을 대비하여 프라미스 체인에 .catch 를 추가해 에러를 처리합니다.
+// .catch 를 추가해주는 걸 잊은 경우, 엔진은 마이크로태스크 큐가 빈 이후에 unhandledrejection 이벤트를 트리거 합니다.
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// async 와 await
+
+// async 함수
+// function 앞에 async 를 붙이면 해당 함수는 항상 프라미스를 반환합니다.
+// 프라미스가 아닌 값을 반환하더라도 이행 상태의 프라미스(resolved promise)로 값을 감싸 이행된 프라미스가 반환되도록 합니다.
+
+async function func1() {
+    return 'func1';
+}
+
+function func2() {
+    return 'func2';
+}
+
+console.log(func1()); // fulfilled promise
+console.log(func2());
+
+// 명시적으로 프라미스를 반환하는 것도 가능합니다. 결과는 동일합니다.
+
+async function func3() {
+    return new Promise((resolve, reject) => resolve('func3'));
+}
+
+console.log(func3());
+
+// async 가 붙은 함수는 반드시 프라미스를 반환하고, 프라미스가 아닌 것은 프라미스로 감싸 반환합니다.
+func3().then(result => console.log(result));
+
+// await
+// await 는 async 함수 안에서만 동작합니다.
+// 자바스크립트는 await 키워드를 만나면 프라미스가 처리될 때까지 기다립니다. 결과는 그 이후 반환됩니다.
+
+async function func4() {
+    let promise = new Promise((resolve, reject) => {
+        setTimeout(() => resolve('func4'), 3000);
+    });
+
+    let result = await promise; // 프라미스가 이행될 때까지 기다림
+    console.log(result);
+    console.log('func4 after??')
+}
+
+func4();
+
+// await 는 말 그대로 프라미스가 처리될 때까지 함수 실행을 기다리게 만듭니다.
+// 프라미스가 처리되면 그 결과와 함께 실행이 재개되죠.
+// 프라미스가 처리되길 기다리는 동안엔 엔진이 다른 일(다른 스크립트 실행, 이벤트 처리 등)을 할 수 있기 때문에, CPU 리소스가 낭비되지 않습니다.
+
+// await 는 promise.then 보다 좀 더 세력되게 프라미스의 result 값을 얻을 수 있도록 해주는 문법입니다.
+
+async function func5() {
+    let response = await fetch('/save/jsonData.json');
+    let data = await response.json();
+    return data;
+}
+
+func5();
+
+// await 는 최상위 레벨 코드에서 작동하지 않습니다.
+// 하지만 익명 async 함수로 코드를 감싸면 최상위 레벨 코드에도 await 를 사용할 수 있습니다.
+
+(async () => {
+    let response = await fetch('/save/jsonData.json');
+    let data = await response.json();
+    console.log(data);
+})();
+
+// 에러 핸들링
+
+// 프라미스가 정상적으로 이행되면 await promise 는 프라미스 객체의 result 에 저장된 값을 반환합니다.
+// 반면에 프라미스가 거부되면 마치 throw 문을 작성한 것처럼 에러가 던져집니다.
+// await 가 던진 에러는 throw 가 던진 에러를 잡을 때처럼 try..catch 를 사용해 잡을 수 있습니다.
+
+async function func6() {
+    try {
+        let response = await fetch('http://none');
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+func6();
+
+// try..catch 가 없으면 async 함수를 호출해 만든 프라미스가 거부 상태가 됩니다.
+// .catch 를 추가하면 거부된 프라미스를 처리할 수 있습니다.
+
+async function func7() {
+    try {
+        let response = await fetch('http://none');
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+func7().catch(e => console.log(e));
+
+// .catch 를 추가하는 걸 잊으면 처리되지 않은 프라미스 에러가 발생합니다.
+// 이런 에러는 전역 이벤트 핸들러 unhandledrejection 을 사용해 잡을 수 있습니다.
+
+// async/await 와 promise.then/catch
+// async/await 을 사용하면 await 가 대기를 처리해주기 때문에 .then 이 거의 필요하지 않습니다.
+// 여기에 더하여 .catch 대신 일반 try..catch 를 사용할 수 있다는 장점도 생깁니다.
+// 그런데 문법 제약 때문에 async 함수 바깥의 최상위 레벨 코드에선 await 를 사용할 수 없습니다.
+// 그렇기 때문에 관행처럼 .then/catch 를 추가해 최종 결과나 처리되지 못한 에러를 다룹니다.
+
+// async / await 는 Promise.all 과도 함께 쓸 수 있습니다.
+
+(async function() {
+    let results = await Promise.all([
+        (await fetch('/save/jsonData.json')).json(),
+        new Promise((resolve,reject) => resolve('promise1')),
+    ]);
+    console.log('Promise.all', results);
+})();
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
