@@ -17,3 +17,9 @@ exports.fetchTest4 = async function(req, res) {
     return res.status(200).json({ id: '200', message: 'success', result: '4'});
     // return res.status(400).json({ id: '400', message: 'error'});
 }
+
+exports.requestTest1 = async function(req, res) {
+    console.log('requestTest1');
+    console.log(req);
+    return res.status(200).json({ id: '200', message: 'success', result: 'requestTest1'});
+}
