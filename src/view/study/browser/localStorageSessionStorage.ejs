@@ -99,6 +99,10 @@ console.log(localStorage.getItem('test'));
 // url - 갱신이 일어난 문서의 url
 // storageArea - 갱신이 일어난 localStorage 나 sessionStorage 객체
 
+// 여기서 중요한 점은 storage 이벤트가 이벤트를 발생시킨 스토리지를 제외하고 스토리지에서 접근 가능한 window 객체 전부에서 일어난다는 사실입니다.
+// 좀 더 구체적으로 설명을 이어나가 보겠습니다.
+// 두 개의 창에 같은 사이트를 띄워놨다고 가정해봅시다.
+// 창은 다르지만 localStorage 는 서로 공유됩니다.
 
 
 
