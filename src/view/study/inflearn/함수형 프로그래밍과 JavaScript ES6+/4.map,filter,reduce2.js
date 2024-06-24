@@ -29,10 +29,6 @@ const reduce = (f, acc, iter) => {
     return acc;
 }
 
-const go = (...args) => reduce((a,f) => f(a), args);
-
-const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
-
 // -----------------------------------------------------------------------------------------------------------------------
 
 const products = [
@@ -43,20 +39,6 @@ const products = [
     {name:'e', price: 30000},
 ];
 
-go(
-    0,
-    a => a+1,
-    a => a+10,
-    a => a+100,
-    log
-);
+const prices = reduce((acc,cur) => acc+cur, 0, map(v => v.price, filter(v => v.price < 20000, products)));
 
-// const pipe = (...fs) => (a) => go(a, ...fs);
-
-const f = pipe(
-    (a,b) => a+b,
-    a => a+10,
-    a => a+100
-)
-
-log(f(1,2))
+log(prices);
