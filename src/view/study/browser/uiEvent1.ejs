@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <div id="text" onmousedown="return false">text</div>
+                    <div id="copy">copy</div>
+                    <button id="button"class="editor-button">button</button>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+
+</body>
+</html>
+
+<script>
+
+// 마우스 이벤트
+
+// 마우스 이벤트와 마우스 이벤트 객체의 프로퍼티에 대해 자세히 다루겠습니다.
+
+// 마우스 이벤트에 대해 학습하기 전에 주의할 점은, 마우스 이벤트는 마우스라는 장치를 통해서만 생기는 것이 아니라 핸드폰이나 태플릿 같은 다른 장치에서도 생긴다는 점입니다.
+
+// 마우스 이벤트 종류
+
+// mousedown,mouseup
+// 요소 위에서 마우스 왼쪽 버튼을 누를때 마우스 버튼 누르고 있다가 뗄 때 발생합니다.
+
+// mouseover,mouseout
+// 마우스 커서가 요소 바깥에 있다가 요소 안으로 움직일 때, 커서가 요소 위에 있다가 요소 밖으로 움직일때 발생합니다.
+
+// mousemove
+// 마우스가 움직일 때 발생합니다.
+
+// click
+// 마우스 왼쪽 버튼을 사용해 동일한 요소 위에서 mousedown 이벤트와 mouseup 이벤트를 연달아 발생시킬때 실행됩니다.
+
+// dbclick
+// 동일한 요소 위에서 마우스 왼쪽 버튼을 빠르게 클릭할 때 발생합니다. 요즘엔 잘 쓰이지 않습니다.
+
+// contextmenu
+// 마우스 오른쪽 버튼을 눌렀을 때 발생합니다.
+// 참고로 특별한 단축키를 눌러도 마우스 오른쪽 버튼을 눌렀을 때처럼 컨텍스트 메뉴가 나타나게 할 수 있지만
+// contextmenu 라는 마우스 이벤트와 동일하진 않습니다.
+
+// 마우스 이벤트 순서
+// 위에서 소개한 마우스 이벤트를 보면서 눈치채셨겠지만, 사용자는 단 하나의 동작을 했어도 실행되는 이벤트는 여러 개일 수 있습니다.
+// 단순하게 마우스 왼쪽 버튼을 클릭하더라도 mousedown, mouseup 마지막으로 click 이벤트가 발생하죠.
+
+// 이렇게 동작은 하나지만 여러 이벤트가 실행될 때 실행 순서는 내부 규칙에 따라 결정됩니다.
+
+// 마우스 버튼
+// 클릭과 연관된 이벤트는 정확히 어떤 버튼에서 이벤트가 발생했는지 알려주는 button 프로퍼티를 지원합니다.
+
+// click 이벤트는 마우스 왼쪽 버튼을, contextmenu 이벤트는 마우스 오른쪽 버튼을 눌렀을 떄 발생하기 때문에
+// click 과 contextmenu 이벤트를 다룰 땐 보통 button 프로퍼티를 사용하지 않습니다.
+
+// 반면 mousedown 이벤트나 mouseup 이벤트를 다룰 땐 해당 이벤트 핸들러에 event.button 을 명시해 줘야 할 수 있습니다.
+// 이 이벤트들은 마우스 버튼 어디에서나 발생할 수 있는데 button 프로퍼티를 사용해야 정확히 어떤 버튼에서 이벤트가 발생했는지 알 수 있습니다.
+
+
+
+document.querySelector('#button').addEventListener('click', function(e) {
+    // console.log(e);
+    // console.log(e.clientX, e.clientY);
+    // console.log(e.pageX, e.pageY);
+    console.log('click');
+});
+
+document.querySelector('#button').addEventListener('mouseup', function() {
+    console.log('mouseup');
+});
+
+document.querySelector('#button').addEventListener('mousedown', function() {
+    console.log('mouseup');
+});
+
+// mousedown 이벤트와 선택 막기
+
+// 글자 위에서 마우스를 더블클릭하면 글자가 선택되즌ㄴ데, 이런 기본 동작이 사용자 경험을 해칠 때가 있습니다.
+// mousedown 이벤트가 발생할 때 나타나는 브라우저 기본 동작을 막는것입니다. 이렇게 하면 글자가 선택되는 부수효과를 막을 수 있습니다.
+
+document.querySelector('#text').addEventListener('mousedown', function(e) {
+    e.preventDefault();
+});
+
+// 복사 막기
+// 콘텐츠를 보호하려는 목적으로 방문자가 내용을 복사, 붙여넣기 하는걸 막으려면 oncopy 라는 이벤트를 활용하면 됩니다.
+
+document.querySelector('#copy').addEventListener('copy', function(e) {
+    e.preventDefault();
+    console.log('copy deny');
+});
+
+// 페이지 소스 보기를 할 수 있는 사용자라면 이런 방법이 소용이 없겠지만 모든 사용자가 소스 보기를 할 수 있는 건 아니기 때문에 이런 식으로 불법 복제를 어느 정도 막을 수 있죠.
+
+
+
+
+
+</script>
