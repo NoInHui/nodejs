@@ -1,5 +1,12 @@
 const fs = require('fs');
 
+exports.promise1 = function(req, res) {
+    // setTimeout(() => {
+    //     return res.status(200).json({ id: '200', message: 'success', result: 'promise1'});
+    // },2000);
+    return res.status(200).json({ id: '200', message: 'success', result: 'promise1'});
+}
+
 exports.fetchTest = async function(req, res) {
     return res.status(200).json({ id: '200', message: 'success', result: '1'});
     // return res.status(400).json({ id: '400', message: 'error'});
