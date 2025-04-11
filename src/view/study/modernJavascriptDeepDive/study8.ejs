@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title><%=pageName%></title>
+    <link type="text/css" rel="stylesheet" href="/style/editor.css">
+    <script type="text/javascript" src="/script/studyScript.js"></script>
+</head>
+<body>
+    <div style="width: 100%; display: flex; justify-content: center;">
+        <div style="padding: 10px 20px; border: 1px solid black; width: 1500PX;">
+            <div class="button-area">
+                <div style="display: flex; align-items: center;">
+                    <h2 class="fileName" style="font-weight: 600;"><%=pageName%></h2>
+                </div>
+                <div>
+                    <button id="pdfBtn" class="editor-button">pdf</button>
+                    <button id="updateBtn" class="editor-button">수정</button>
+                </div>
+            </div>
+            <div class="contents-section">
+                <div>
+                    <textarea id="editor" style="width:1455PX;height:700px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="category" value="<%=category%>"/>
+    <input type="hidden" id="page" value="<%=page%>"/>
+</body>
+</html>
+
+<script>
+    const log = console.log;
+    
+    // 제너레이터를 사용해서 비동기 처리를 동기 처리처럼 동작하도록 구현했지만
+    // 코드가 무척이나 장황해지고 가독성도 나쁘다.
+    // ES8 에서는 제너레이터보다 간단하고 가독성 좋게 비동기 처리를 동기 처리처럼 동작하도록 구현할 수 있는 async/await 가 도입되었다.
+
+    // async/await 는 프로미스를 기반으로 동작한다.
+    // async/await 를 사용하면 프로미스의 then catch finally 후속 처리 메서드에 콜백 함수를 전달해서 비동기 처리 결과를 후속처리 할 필요없이 마치 동기 처리처럼 프로미스를 사용할 수 있다.
+    // 다시 말해 프로미스의 후속 처리 메서드 없이 마치 동기처리 처럼 프로미스가 처리 결과를 반환하도록 구현할 수 있따.
+
+    // await 키워드는 반드시 async 함수 내부에서 사용해야 한다. async 함수는 async 키워드를 사용해 정의하며 언제나 프라미스를 반환한다.
+    // async 함수가 명시적으로 프라미스를 반환하지 않더라도 async 함수는 암묵적으로 반환값을 resolve 하는 프라미스를 반환한다.
+
+    // await 키워드
+    // await 키워드는 프로미스가 settled 상태가 될 때까지 대기하다가 settled 상태가 되면 프로미스가 resolve 한 처리 결과를 반환한다.
+    // await 키워드는 반드시 프로미스 앞에서 사용해야 한다.
+
+    // await 키워드는 프로미스가 settled 상태가 될 떄까지 대기한다고 했다.
+    // 따라서 fetch 함수가 수행한 HTTP 요청에 대한 서버 응답이 도착해서 fetch 함수가 반환한 프로미스가 settled 상태가 될 때까지 대기하게 된다.
+    // 이후 프라미스가 setteld 상태가 되면 프로미스가 resolve 한 처리 겨로가가 res 변수에 할당된다.
+
+    // const func1 = async () => 1;
+    // const func2 = () => 1;
+    // const func3 = (time) => {
+    //     return new Promise((resolve,reject) => {
+    //         setTimeout(() => resolve('끝'),time);
+    //     })
+    // }
+
+    // const func4 = () => {
+    //     return 1;
+    // }
+
+    // init();
+
+    // async function init() {
+
+    //     // let data = fetchTodo();
+    //     // data.then(v => log(v));
+    //     // log(func1());
+    //     // log(func2());
+    //     // log(func3(3000));
+    //     // func3(3000).then(v => log(v));
+    //     // let a = await func3(3000);
+    //     // log(a);
+    //     let a = await func4();
+    //     log(a);
+    // }
+
+    // async function fetchTodo() {
+    //     const url = 'https://jsonplaceholder.typicode.com/todos/1';
+    //     const response = await fetch(url);
+    //     // log(await response.json())
+    //     return await response.json();
+    // }
+
+    // 모든 프로미스에 await 키워드를 사용하는 것은 주의해야 한다.
+    // 비동기 처리는 서로 연관이 없이 개별적으로 수행되는 비동기 처리이므로 앞선 비동기 처리가 완료될 떄까지 대기해서 순차적으로 처리할 필요가 없다.
+
+    const foo = async () => {
+        // const a = await new Promise(resolve => setTimeout(() => resolve(1),3000));
+        // const b = await new Promise(resolve => setTimeout(() => resolve(2),2000));
+        // const c = await new Promise(resolve => setTimeout(() => resolve(3),1000));
+
+        const res = await Promise.all([
+            new Promise(resolve => setTimeout(() => resolve(1),3000))
+            , new Promise(resolve => setTimeout(() => resolve(2),2000))
+            , new Promise(resolve => setTimeout(() => resolve(3),1000))
+        ]);
+
+        log(res);
+
+        // log(a,b,c);
+    }
+
+    async function init() {
+        console.time('foo');
+        await foo();
+        console.timeEnd('foo');
+    }
+
+    init();
+
+    // 비동기 처리를 위한 콜백 패턴의 단점 중 가장 심각한 것은 에러 처리가 곤란하다는 것이다.
+    // 에러는 호출자caller 방향으로 전파된다.
+    // 즉 콜 스택의 아래 방향으로 전파된다.
+    
+
+    
+
+
+
+    
+
+    
+
+</script>
