@@ -34,6 +34,34 @@
 
 const log = console.log;
 
+// 동기 처리와 비동기 처리
+
+// 자바스크립트 엔진은 단 하나의 실행 컨텍스트 스택을 갖는다.
+
+// 동시에 2개 이상의 함수를 동시에 실행할 수 없다는 것ㅇ르 의미
+// 실행 중인 실행 컨택스트를 제외한 모든 실행 컨텍스트는 모두 실행 대기 중인 태스크 들이다.
+// 싱글 스레드 방식으로 동작한다.
+// 블로킹이 발생한다.
+
+function sleep(func, delay) {
+    const delayUntil = Date.now() + delay;
+    while(Date.now() < delayUntil);
+
+    func();
+}
+
+function foo() {
+    log('foo');
+}
+
+function bar() {
+    log('bar');
+}
+
+sleep(foo, 3*1000);
+
+
+
 
 
 
