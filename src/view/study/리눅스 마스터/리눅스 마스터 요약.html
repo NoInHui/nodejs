@@ -1,0 +1,120 @@
+사용자 종류 : 루트 계정, 시스템 계정, 사용자 계정
+
+루트(root) 계정
+루트 계정의 uid 는 0
+
+su : root 사용자로 전환하여 로그인
+su - : root 사용자의 환경변수도 로드하면서 로그인
+
+sudo 명령어를 통하여 root 권한으로 해당 명령어를 실행
+sudo vi /etc/passwd
+
+/etc/passwd 파일에서 사용자의 uid 를 0으로 입력하면 해당 사용자는 root 권한을 갖게됨
+
+시스템 계정
+시스템 계정은 메일관리,ssh 연결 등 시스템의 특정 서비스에 대한 권한을 행사할 수 있는 계정
+bin, daemon, adm, lp, sync, shutdown, halt, mail 과 같은 계정들이 시스템 계정
+
+useradd : 사용자 생성
+
+sudo useradd -d /home/color/blue -u 1001 -g color -e 2025-08-25 blue
+홈 디렉터리 : /home/color/blue , uid : 1001 , 그룹 : color , 계정 만료일 : 2025-08-25 -> blue 사용자 계정 생성
+
+passwd : 패스워드 설정
+
+sudo passwd blue : 패스워드 설정
+sudo passwd -e blue : 패스워드 만료, 다음 로그인 시 패스워드 재지정
+sudo passwd -S blue : 패스워드 상태 출력
+
+su : switch user 의 약자로 현재 로그인 세션에서 다른 사용자의 권한으로 실행하고자 할 때 사용
+
+su : root 사용자 전환
+su - , su -l , su -login : root 사용자로 전환 및 환경변수 등 로그인 환경을 설정한 후 로그인
+su root -c "vi /etc/passwd" : 사용자로 전환하지 않고 일시적으로 지정한 명령 실행
+su - blue : 지정한 사용자로 전환
+
+usermod : 사용자 셸, 홈 디렉터리, 그룹, uid, gid 등 사용자 설정 변경
+
+usermod -d /home/whiteblue blue : 홈 디렉토리 변경
+usermod -g photo blue : 사용자의 그룹 변경
+
+userdel : 사용자 계정을 삭제
+
+userdel : 사용자 계정 삭제, 홈 디렉터리 및 그 안의 파일 그대로 남아있음
+userdel -r blue : 홈 디렉터리 및 사용자 계정과 관련된 메일 모두 삭제
+userdel -f blue : 사용자가 로그인되어 있더라도 강제로 삭제
+
+chage : 사용자의 패스워드 만료 정보를 설정
+
+sudo chage -l blue : 패스워드 만료 정보 조회
+sudo chage -m 7 -M 365 -W 5 -l 3 blue : 패스워드 최소 사용 날짜 7일, 최대 사용 날짜 365일, 만료 5일 전부터 경고 메시지, 만료 후 3일까지 비활성화되지 않는다.
+sudo chage -E 2019-12-24 blue : 만료일 지정
+
+groupadd : 그룹 생성
+
+sudo groupadd color : 그룹 생성
+sudo groupadd -g 550 color : gid 지정하여 그룹 생성
+
+groupmod : 그룹 관련 설정 파일인 /etc/group, /etc/gshadow, /etc/passwd 에서 그룹 관련 속성 변경
+
+sudo groupmod -n newcolor color : color 그룹을 newcolor 그룹으로 이름 변경
+sudo groupmod -g 567 color : gid 변경
+
+groupdel : 그룹 삭제
+
+sudo groupdel color : 지정한 그룹 삭제
+
+gpasswd : 그룹 패스워드 변경
+
+gpasswd -a blue color : 그룹에 사용자 추가
+gpasswd -d blue color : 그룹에서 사용자 삭제
+gpasswd color : 그룹 패스워드 설정
+gpasswd -r color : 그룹 패스워드 삭제
+gpasswd -R color : 그룹의 접근 제한
+gpasswd -A blue color : 그룹의 관리자 지정
+gpasswd -M red,blue color : 그룹의 멤버로 red,blue 지정
+
+newgrp : 현재 로그인되어 있는 세션의 gid 를 변경한다.
+
+newcrp color : 현재 그룹 대신 color 그룹으로 전환한다.
+
+사용자 환경 설정 파일
+사용자 계정과 그룹 정보는 /etc 이하에 존재
+/etc/passwd : 계정정보
+/etc/shadow : 암호화된 패스워드 및 정책 정보 설정
+/etc/group : 사용자 그룹의 기본 정보
+/etc/gshadow : 사용자 그룹의 암호화된 패스워드 정보
+/etc/default/useradd : useradd 명령 기본 설정 
+/etc/login.defs : 로그인 수행 시 기본 설정
+/etc/skel : 홈 디렉터리 생성 시 기본으로 제공할 파일
+
+users : 현재 호스트에 로그인되어 있는 모든 사용자를 출력
+
+who : 현재 호스트에 로그인되어 있는 모든 사용자의 정보를 출력
+
+whoami : 현재 로그인한 사용자의 사용자명 출력
+
+w : 현재 로그인한 사용자가 어떤 시스템에서 로그인했는지, 어떤 프로세스를 실행하고 있는지 출력
+
+logname : 현재 로그인한 사용자의 로그인 이름 출력
+
+id : 지정한 사용자의 사용자 정보와 그룹 정보 출력
+
+groups : 특정 사용자나 현재 로그인한 사용자가 속한 그룹을 표시
+
+lslogins : wtmp 및 btmp 로그를 바탕으로 시스템의 전체 사용자를 출력
+
+lslogins -u : 시스템 사용자를 제외한 사용자의 정보를 출력
+
+pwconv : /etc/passwd 로 부터 /etc/shadow 를 생성
+
+pwunconv : /etc/passwd 와 /etc/shadow 를 통해 /etc/passwd 생성하고 /etc/shadow 를 삭제
+
+grpconv : /etc/group 로 부터 /etc/gshadow 를 생성한다.
+
+grpunconv : /etc/group 과 /etc/gshadow 를 통해 /etc/group 을 생성하고 /etc/gshadow 를 삭제
+
+pwck : /etc/passwd 점검
+
+grpck : /etc/group 점검
+
