@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./controller');
 
+router.get('/nodejs', controller.nodejs);
+
 router.get('/fetchTest', controller.fetchTest);
 router.get('/fetchTest2', controller.fetchTest2);
 router.get('/fetchTest3', controller.fetchTest3);

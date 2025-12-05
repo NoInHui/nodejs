@@ -100,3 +100,11 @@ exports.deleteTodos = async function(req, res) {
         return res.status(400).json({ id: '400', message: 'error'});
     }
 }
+
+exports.nodejs = function(req, res) {
+    
+
+
+
+    return res.status(200).json({ id: '200', message: 'success'});
+}
